@@ -13,29 +13,45 @@ ec2_associate_address(
   NetworkInterfaceId = NULL,
   PrivateIpAddress = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
-\item{AllocationId}{String. [EC2-VPC] The allocation ID. This is required for EC2-VPC.[optional]}
+\item{AllocationId}{Character. [EC2-VPC] The allocation ID. This is required for EC2-VPC.[optional]}
 
-\item{InstanceId}{String. The ID of the instance.[optional]}
+\item{InstanceId}{Character. The ID of the instance.[optional]}
 
-\item{PublicIp}{String. [EC2-Classic] The Elastic IP address to associate with the instance.[optional]}
+\item{PublicIp}{Character. [EC2-Classic] The Elastic IP address to associate with the instance.[optional]}
 
 \item{AllowReassociation}{Logical. [EC2-VPC] For a VPC in an EC2-Classic account, specify true to allow an Elastic IP address that...[optional]}
 
 \item{DryRun}{Logical. Checks whether you have the required permissions for the action, without actually making the request,...[optional]}
 
-\item{NetworkInterfaceId}{String.   [EC2-VPC] The ID of the network interface.[optional]}
+\item{NetworkInterfaceId}{Character.   [EC2-VPC] The ID of the network interface.[optional]}
 
-\item{PrivateIpAddress}{String. [EC2-VPC] The primary or secondary private IP address to associate with the Elastic IP address.[optional]}
+\item{PrivateIpAddress}{Character. [EC2-VPC] The primary or secondary private IP address to associate with the Elastic IP address.[optional]}
 
 \item{simplify}{Logical. Whether to simplify the result and handle \code{nextToken}
 in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

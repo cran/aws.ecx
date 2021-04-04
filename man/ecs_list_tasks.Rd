@@ -15,33 +15,49 @@ ecs_list_tasks(
   desiredStatus = NULL,
   launchType = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
-\item{maxResults}{String. Pagination limit[optional]}
+\item{maxResults}{Character. Pagination limit[optional]}
 
-\item{nextToken}{Characters, The token for the next page of results[optional]}
+\item{nextToken}{Characters. The token for the next page of results[optional]}
 
-\item{cluster}{String. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the tasks to list.}
+\item{cluster}{Character. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the tasks to list.}
 
-\item{containerInstance}{String. The container instance ID or full ARN of the container instance with which to filter the \code{ListTasks}...}
+\item{containerInstance}{Character. The container instance ID or full ARN of the container instance with which to filter the \code{ListTasks}...}
 
-\item{family}{String. The name of the family with which to filter the \code{ListTasks} results.}
+\item{family}{Character. The name of the family with which to filter the \code{ListTasks} results.}
 
-\item{startedBy}{String. The \code{startedBy} value with which to filter the task results.}
+\item{startedBy}{Character. The \code{startedBy} value with which to filter the task results.}
 
-\item{serviceName}{String. The name of the service with which to filter the \code{ListTasks} results.}
+\item{serviceName}{Character. The name of the service with which to filter the \code{ListTasks} results.}
 
-\item{desiredStatus}{String.   The task desired status with which to filter the \code{ListTasks} results.}
+\item{desiredStatus}{Character.   The task desired status with which to filter the \code{ListTasks} results.}
 
-\item{launchType}{String. The launch type for services to list.}
+\item{launchType}{Character. The launch type for services to list.}
 
 \item{simplify}{Logical. Whether to simplify the result and handle \code{nextToken}
 in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

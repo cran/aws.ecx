@@ -16,25 +16,29 @@ ec2_copy_snapshot(
   TagSpecification = NULL,
   DryRun = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
-\item{SourceRegion}{String. The ID of the Region that contains the snapshot to be copied.}
+\item{SourceRegion}{Character. The ID of the Region that contains the snapshot to be copied.}
 
-\item{SourceSnapshotId}{String. The ID of the EBS snapshot to copy.}
+\item{SourceSnapshotId}{Character. The ID of the EBS snapshot to copy.}
 
-\item{Description}{String. A description for the EBS snapshot.[optional]}
+\item{Description}{Character. A description for the EBS snapshot.[optional]}
 
-\item{DestinationOutpostArn}{String.   The Amazon Resource Name (ARN) of the Outpost to which to copy the snapshot.[optional]}
+\item{DestinationOutpostArn}{Character.   The Amazon Resource Name (ARN) of the Outpost to which to copy the snapshot.[optional]}
 
-\item{DestinationRegion}{String.   The destination Region to use in the \code{PresignedUrl} parameter of a snapshot copy operation.[optional]}
+\item{DestinationRegion}{Character.   The destination Region to use in the \code{PresignedUrl} parameter of a snapshot copy operation.[optional]}
 
 \item{Encrypted}{Logical. To encrypt a copy of an unencrypted snapshot if encryption by default is not enabled, enable encryption...[optional]}
 
-\item{KmsKeyId}{String.   The identifier of the AWS Key Management Service (AWS KMS) customer master key (CMK) to use for...[optional]}
+\item{KmsKeyId}{Character.   The identifier of the AWS Key Management Service (AWS KMS) customer master key (CMK) to use for...[optional]}
 
-\item{PresignedUrl}{String.   When you copy an encrypted source snapshot using the Amazon EC2 Query API, you must supply a pre-signed...[optional]}
+\item{PresignedUrl}{Character.   When you copy an encrypted source snapshot using the Amazon EC2 Query API, you must supply a pre-signed...[optional]}
 
 \item{TagSpecification}{List. The tags to apply to the new snapshot.[optional]}
 
@@ -45,6 +49,18 @@ in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

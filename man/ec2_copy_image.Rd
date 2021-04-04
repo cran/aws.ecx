@@ -15,25 +15,29 @@ ec2_copy_image(
   DestinationOutpostArn = NULL,
   DryRun = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
-\item{Name}{String. The name of the new AMI in the destination Region.}
+\item{Name}{Character. The name of the new AMI in the destination Region.}
 
-\item{SourceImageId}{String. The ID of the AMI to copy.}
+\item{SourceImageId}{Character. The ID of the AMI to copy.}
 
-\item{SourceRegion}{String. The name of the Region that contains the AMI to copy.}
+\item{SourceRegion}{Character. The name of the Region that contains the AMI to copy.}
 
-\item{ClientToken}{String. Unique, case-sensitive identifier you provide to ensure idempotency of the request.[optional]}
+\item{ClientToken}{Character. Unique, case-sensitive identifier you provide to ensure idempotency of the request.[optional]}
 
-\item{Description}{String. A description for the new AMI in the destination Region.[optional]}
+\item{Description}{Character. A description for the new AMI in the destination Region.[optional]}
 
 \item{Encrypted}{Logical. Specifies whether the destination snapshots of the copied image should be encrypted.[optional]}
 
-\item{KmsKeyId}{String.   The identifier of the symmetric AWS Key Management Service (AWS KMS) customer master key (CMK)...[optional]}
+\item{KmsKeyId}{Character.   The identifier of the symmetric AWS Key Management Service (AWS KMS) customer master key (CMK)...[optional]}
 
-\item{DestinationOutpostArn}{String.   The Amazon Resource Name (ARN) of the Outpost to which to copy the AMI.[optional]}
+\item{DestinationOutpostArn}{Character.   The Amazon Resource Name (ARN) of the Outpost to which to copy the AMI.[optional]}
 
 \item{DryRun}{Logical. Checks whether you have the required permissions for the action, without actually making the request,...[optional]}
 
@@ -42,6 +46,18 @@ in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

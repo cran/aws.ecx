@@ -18,25 +18,29 @@ ec2_create_volume(
   MultiAttachEnabled = NULL,
   Throughput = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
-\item{AvailabilityZone}{String. The Availability Zone in which to create the volume.}
+\item{AvailabilityZone}{Character. The Availability Zone in which to create the volume.}
 
 \item{Encrypted}{Logical.   Indicates whether the volume should be encrypted.[optional]}
 
 \item{Iops}{Integer.   The number of I/O operations per second (IOPS).[optional]}
 
-\item{KmsKeyId}{String.   The identifier of the AWS Key Management Service (AWS KMS) customer master key (CMK) to use for...[optional]}
+\item{KmsKeyId}{Character.   The identifier of the AWS Key Management Service (AWS KMS) customer master key (CMK) to use for...[optional]}
 
-\item{OutpostArn}{String. The Amazon Resource Name (ARN) of the Outpost.[optional]}
+\item{OutpostArn}{Character. The Amazon Resource Name (ARN) of the Outpost.[optional]}
 
 \item{Size}{Integer.   The size of the volume, in GiBs.[optional]}
 
-\item{SnapshotId}{String. The snapshot from which to create the volume.[optional]}
+\item{SnapshotId}{Character. The snapshot from which to create the volume.[optional]}
 
-\item{VolumeType}{String.   The volume type.[optional]}
+\item{VolumeType}{Character.   The volume type.[optional]}
 
 \item{DryRun}{Logical. Checks whether you have the required permissions for the action, without actually making the request,...[optional]}
 
@@ -51,6 +55,18 @@ in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

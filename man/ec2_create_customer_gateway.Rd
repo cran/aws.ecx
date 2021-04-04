@@ -13,21 +13,25 @@ ec2_create_customer_gateway(
   DeviceName = NULL,
   DryRun = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
 \item{BgpAsn}{Integer.   For devices that support BGP, the customer gateway\'s BGP ASN.  Default: 65000}
 
-\item{Type}{String. The type of VPN connection that this customer gateway supports (\code{ipsec.1}).}
+\item{Type}{Character. The type of VPN connection that this customer gateway supports (\code{ipsec.1}).}
 
-\item{IpAddress}{String. The Internet-routable IP address for the customer gateway\'s outside interface.[optional]}
+\item{IpAddress}{Character. The Internet-routable IP address for the customer gateway\'s outside interface.[optional]}
 
-\item{CertificateArn}{String. The Amazon Resource Name (ARN) for the customer gateway certificate.[optional]}
+\item{CertificateArn}{Character. The Amazon Resource Name (ARN) for the customer gateway certificate.[optional]}
 
 \item{TagSpecification}{List. The tags to apply to the customer gateway.[optional]}
 
-\item{DeviceName}{String.   A name for the customer gateway device.  Length Constraints: Up to 255 characters.  [optional]}
+\item{DeviceName}{Character.   A name for the customer gateway device.  Length Constraints: Up to 255 characters.  [optional]}
 
 \item{DryRun}{Logical. Checks whether you have the required permissions for the action, without actually making the request,...[optional]}
 
@@ -36,6 +40,18 @@ in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

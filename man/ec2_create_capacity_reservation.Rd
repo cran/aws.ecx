@@ -20,33 +20,37 @@ ec2_create_capacity_reservation(
   TagSpecifications = NULL,
   DryRun = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
-\item{InstanceType}{String. The instance type for which to reserve capacity.}
+\item{InstanceType}{Character. The instance type for which to reserve capacity.}
 
-\item{InstancePlatform}{String. The type of operating system for which to reserve capacity.}
+\item{InstancePlatform}{Character. The type of operating system for which to reserve capacity.}
 
 \item{InstanceCount}{Integer. The number of instances for which to reserve capacity.}
 
-\item{ClientToken}{String. Unique, case-sensitive identifier that you provide to ensure the idempotency of the request.[optional]}
+\item{ClientToken}{Character. Unique, case-sensitive identifier that you provide to ensure the idempotency of the request.[optional]}
 
-\item{AvailabilityZone}{String. The Availability Zone in which to create the Capacity Reservation.[optional]}
+\item{AvailabilityZone}{Character. The Availability Zone in which to create the Capacity Reservation.[optional]}
 
-\item{AvailabilityZoneId}{String. The ID of the Availability Zone in which to create the Capacity Reservation.[optional]}
+\item{AvailabilityZoneId}{Character. The ID of the Availability Zone in which to create the Capacity Reservation.[optional]}
 
-\item{Tenancy}{String.   Indicates the tenancy of the Capacity Reservation.[optional]}
+\item{Tenancy}{Character.   Indicates the tenancy of the Capacity Reservation.[optional]}
 
 \item{EbsOptimized}{Logical. Indicates whether the Capacity Reservation supports EBS-optimized instances.[optional]}
 
 \item{EphemeralStorage}{Logical. Indicates whether the Capacity Reservation supports instances with temporary, block-level storage.[optional]}
 
-\item{EndDate}{String.   The date and time at which the Capacity Reservation expires.[optional]}
+\item{EndDate}{Character.   The date and time at which the Capacity Reservation expires.[optional]}
 
-\item{EndDateType}{String.   Indicates the way in which the Capacity Reservation ends.[optional]}
+\item{EndDateType}{Character.   Indicates the way in which the Capacity Reservation ends.[optional]}
 
-\item{InstanceMatchCriteria}{String.   Indicates the type of instance launches that the Capacity Reservation accepts.[optional]}
+\item{InstanceMatchCriteria}{Character.   Indicates the type of instance launches that the Capacity Reservation accepts.[optional]}
 
 \item{TagSpecifications}{List. The tags to apply to the Capacity Reservation during launch.[optional]}
 
@@ -57,6 +61,18 @@ in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

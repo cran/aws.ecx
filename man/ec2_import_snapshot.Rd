@@ -15,15 +15,19 @@ ec2_import_snapshot(
   RoleName = NULL,
   TagSpecification = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
 \item{ClientData}{Object. The client-specific data.[optional]}
 
-\item{ClientToken}{String. Token to enable idempotency for VM import requests.[optional]}
+\item{ClientToken}{Character. Token to enable idempotency for VM import requests.[optional]}
 
-\item{Description}{String. The description string for the import snapshot task.[optional]}
+\item{Description}{Character. The description string for the import snapshot task.[optional]}
 
 \item{DiskContainer}{Object. Information about the disk container.[optional]}
 
@@ -31,9 +35,9 @@ ec2_import_snapshot(
 
 \item{Encrypted}{Logical. Specifies whether the destination snapshot of the imported image should be encrypted.[optional]}
 
-\item{KmsKeyId}{String.   An identifier for the symmetric AWS Key Management Service (AWS KMS) customer master key (CMK)...[optional]}
+\item{KmsKeyId}{Character.   An identifier for the symmetric AWS Key Management Service (AWS KMS) customer master key (CMK)...[optional]}
 
-\item{RoleName}{String. The name of the role to use when not using the default role, \'vmimport\'.[optional]}
+\item{RoleName}{Character. The name of the role to use when not using the default role, \'vmimport\'.[optional]}
 
 \item{TagSpecification}{List. The tags to apply to the import snapshot task during creation.[optional]}
 
@@ -42,6 +46,18 @@ in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

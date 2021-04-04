@@ -11,17 +11,21 @@ ec2_create_instance_export_task(
   Description = NULL,
   TagSpecification = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
 \item{ExportToS3}{Object. The format and location for an export instance task.}
 
-\item{InstanceId}{String. The ID of the instance.}
+\item{InstanceId}{Character. The ID of the instance.}
 
-\item{TargetEnvironment}{String. The target virtualization environment.}
+\item{TargetEnvironment}{Character. The target virtualization environment.}
 
-\item{Description}{String. A description for the conversion task or the resource being exported.[optional]}
+\item{Description}{Character. A description for the conversion task or the resource being exported.[optional]}
 
 \item{TagSpecification}{List. The tags to apply to the export instance task during creation.[optional]}
 
@@ -30,6 +34,18 @@ in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

@@ -22,47 +22,63 @@ ec2_replace_route(
   NetworkInterfaceId = NULL,
   VpcPeeringConnectionId = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
-\item{RouteTableId}{String. The ID of the route table.}
+\item{RouteTableId}{Character. The ID of the route table.}
 
-\item{DestinationCidrBlock}{String. The IPv4 CIDR address block used for the destination match.[optional]}
+\item{DestinationCidrBlock}{Character. The IPv4 CIDR address block used for the destination match.[optional]}
 
-\item{DestinationIpv6CidrBlock}{String. The IPv6 CIDR address block used for the destination match.[optional]}
+\item{DestinationIpv6CidrBlock}{Character. The IPv6 CIDR address block used for the destination match.[optional]}
 
-\item{DestinationPrefixListId}{String. The ID of the prefix list for the route.[optional]}
+\item{DestinationPrefixListId}{Character. The ID of the prefix list for the route.[optional]}
 
 \item{DryRun}{Logical. Checks whether you have the required permissions for the action, without actually making the request,...[optional]}
 
-\item{VpcEndpointId}{String. The ID of a VPC endpoint. Supported for Gateway Load Balancer endpoints only.[optional]}
+\item{VpcEndpointId}{Character. The ID of a VPC endpoint. Supported for Gateway Load Balancer endpoints only.[optional]}
 
-\item{EgressOnlyInternetGatewayId}{String. [IPv6 traffic only] The ID of an egress-only internet gateway.[optional]}
+\item{EgressOnlyInternetGatewayId}{Character. [IPv6 traffic only] The ID of an egress-only internet gateway.[optional]}
 
-\item{GatewayId}{String. The ID of an internet gateway or virtual private gateway.[optional]}
+\item{GatewayId}{Character. The ID of an internet gateway or virtual private gateway.[optional]}
 
-\item{InstanceId}{String. The ID of a NAT instance in your VPC.[optional]}
+\item{InstanceId}{Character. The ID of a NAT instance in your VPC.[optional]}
 
 \item{LocalTarget}{Logical. Specifies whether to reset the local route to its default target (\code{local}).[optional]}
 
-\item{NatGatewayId}{String. [IPv4 traffic only] The ID of a NAT gateway.[optional]}
+\item{NatGatewayId}{Character. [IPv4 traffic only] The ID of a NAT gateway.[optional]}
 
-\item{TransitGatewayId}{String. The ID of a transit gateway.[optional]}
+\item{TransitGatewayId}{Character. The ID of a transit gateway.[optional]}
 
-\item{LocalGatewayId}{String. The ID of the local gateway.[optional]}
+\item{LocalGatewayId}{Character. The ID of the local gateway.[optional]}
 
-\item{CarrierGatewayId}{String. [IPv4 traffic only] The ID of a carrier gateway.[optional]}
+\item{CarrierGatewayId}{Character. [IPv4 traffic only] The ID of a carrier gateway.[optional]}
 
-\item{NetworkInterfaceId}{String. The ID of a network interface.[optional]}
+\item{NetworkInterfaceId}{Character. The ID of a network interface.[optional]}
 
-\item{VpcPeeringConnectionId}{String. The ID of a VPC peering connection.[optional]}
+\item{VpcPeeringConnectionId}{Character. The ID of a VPC peering connection.[optional]}
 
 \item{simplify}{Logical. Whether to simplify the result and handle \code{nextToken}
 in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

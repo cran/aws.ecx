@@ -19,7 +19,11 @@ ec2_create_fleet(
   ReplaceUnhealthyInstances = NULL,
   TagSpecification = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
@@ -29,21 +33,21 @@ ec2_create_fleet(
 
 \item{DryRun}{Logical. Checks whether you have the required permissions for the action, without actually making the request,...[optional]}
 
-\item{ClientToken}{String. Unique, case-sensitive identifier that you provide to ensure the idempotency of the request.[optional]}
+\item{ClientToken}{Character. Unique, case-sensitive identifier that you provide to ensure the idempotency of the request.[optional]}
 
 \item{SpotOptions}{Object. Describes the configuration of Spot Instances in an EC2 Fleet.[optional]}
 
 \item{OnDemandOptions}{Object. Describes the configuration of On-Demand Instances in an EC2 Fleet.[optional]}
 
-\item{ExcessCapacityTerminationPolicy}{String. Indicates whether running instances should be terminated if the total target capacity of the EC2...[optional]}
+\item{ExcessCapacityTerminationPolicy}{Character. Indicates whether running instances should be terminated if the total target capacity of the EC2...[optional]}
 
 \item{TerminateInstancesWithExpiration}{Logical. Indicates whether running instances should be terminated when the EC2 Fleet expires.[optional]}
 
-\item{Type}{String.   The type of request.[optional]}
+\item{Type}{Character.   The type of request.[optional]}
 
-\item{ValidFrom}{String. The start date and time of the request, in UTC format (for example, \emph{YYYY}-\emph{MM}-\emph{DD}T\emph{HH}:\emph{MM}:\emph{SS}Z)....[optional]}
+\item{ValidFrom}{Character. The start date and time of the request, in UTC format (for example, \emph{YYYY}-\emph{MM}-\emph{DD}T\emph{HH}:\emph{MM}:\emph{SS}Z)....[optional]}
 
-\item{ValidUntil}{String. The end date and time of the request, in UTC format (for example, \emph{YYYY}-\emph{MM}-\emph{DD}T\emph{HH}:\emph{MM}:\emph{SS}Z)....[optional]}
+\item{ValidUntil}{Character. The end date and time of the request, in UTC format (for example, \emph{YYYY}-\emph{MM}-\emph{DD}T\emph{HH}:\emph{MM}:\emph{SS}Z)....[optional]}
 
 \item{ReplaceUnhealthyInstances}{Logical. Indicates whether EC2 Fleet should replace unhealthy Spot Instances.[optional]}
 
@@ -54,6 +58,18 @@ in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

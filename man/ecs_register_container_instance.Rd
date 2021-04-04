@@ -15,21 +15,25 @@ ecs_register_container_instance(
   platformDevices = NULL,
   tags = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
-\item{cluster}{String. The short name or full Amazon Resource Name (ARN) of the cluster with which to register your container...}
+\item{cluster}{Character. The short name or full Amazon Resource Name (ARN) of the cluster with which to register your container...}
 
-\item{instanceIdentityDocument}{String. The instance identity document for the EC2 instance to register.}
+\item{instanceIdentityDocument}{Character. The instance identity document for the EC2 instance to register.}
 
-\item{instanceIdentityDocumentSignature}{String. The instance identity document signature for the EC2 instance to register.}
+\item{instanceIdentityDocumentSignature}{Character. The instance identity document signature for the EC2 instance to register.}
 
 \item{totalResources}{List. The resources available on the instance.}
 
 \item{versionInfo}{Object. The version information for the Amazon ECS container agent and Docker daemon running on the container...}
 
-\item{containerInstanceArn}{String. The ARN of the container instance (if it was previously registered).}
+\item{containerInstanceArn}{Character. The ARN of the container instance (if it was previously registered).}
 
 \item{attributes}{List. The container instance attributes that this container instance supports.}
 
@@ -42,6 +46,18 @@ in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

@@ -10,15 +10,19 @@ ecs_delete_task_set(
   taskSet = NULL,
   force = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
-\item{cluster}{String. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the service that the...}
+\item{cluster}{Character. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the service that the...}
 
-\item{service}{String. The short name or full Amazon Resource Name (ARN) of the service that hosts the task set to delete.}
+\item{service}{Character. The short name or full Amazon Resource Name (ARN) of the service that hosts the task set to delete.}
 
-\item{taskSet}{String. The task set ID or full Amazon Resource Name (ARN) of the task set to delete.}
+\item{taskSet}{Character. The task set ID or full Amazon Resource Name (ARN) of the task set to delete.}
 
 \item{force}{Logical. If \code{true}, this allows you to delete a task set even if it hasn\'t been scaled down to zero.}
 
@@ -27,6 +31,18 @@ in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

@@ -18,17 +18,21 @@ ecs_update_service(
   forceNewDeployment = NULL,
   healthCheckGracePeriodSeconds = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
-\item{cluster}{String. The short name or full Amazon Resource Name (ARN) of the cluster that your service is running on.}
+\item{cluster}{Character. The short name or full Amazon Resource Name (ARN) of the cluster that your service is running on.}
 
-\item{service}{String. The name of the service to update.}
+\item{service}{Character. The name of the service to update.}
 
 \item{desiredCount}{Integer. The number of instantiations of the task to place and keep running in your service.}
 
-\item{taskDefinition}{String. The \code{family} and \code{revision} (\code{family:revision}) or full ARN of the task definition to run in your...}
+\item{taskDefinition}{Character. The \code{family} and \code{revision} (\code{family:revision}) or full ARN of the task definition to run in your...}
 
 \item{capacityProviderStrategy}{List.   The capacity provider strategy to update the service to use.}
 
@@ -40,7 +44,7 @@ ecs_update_service(
 
 \item{placementStrategy}{List.   The task placement strategy objects to update the service to use.}
 
-\item{platformVersion}{String. The platform version on which your tasks in the service are running.}
+\item{platformVersion}{Character. The platform version on which your tasks in the service are running.}
 
 \item{forceNewDeployment}{Logical. Whether to force a new deployment of the service.}
 
@@ -51,6 +55,18 @@ in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

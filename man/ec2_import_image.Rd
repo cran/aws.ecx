@@ -20,17 +20,21 @@ ec2_import_image(
   LicenseSpecifications = NULL,
   TagSpecification = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
-\item{Architecture}{String.   The architecture of the virtual machine.  Valid values: \code{i386} \| \code{x86_64} \| \code{arm64}  [optional]}
+\item{Architecture}{Character.   The architecture of the virtual machine.  Valid values: \code{i386} \| \code{x86_64} \| \code{arm64}  [optional]}
 
 \item{ClientData}{Object. The client-specific data.[optional]}
 
-\item{ClientToken}{String. The token to enable idempotency for VM import requests.[optional]}
+\item{ClientToken}{Character. The token to enable idempotency for VM import requests.[optional]}
 
-\item{Description}{String. A description string for the import image task.[optional]}
+\item{Description}{Character. A description string for the import image task.[optional]}
 
 \item{DiskContainer}{List. Information about the disk containers.[optional]}
 
@@ -38,15 +42,15 @@ ec2_import_image(
 
 \item{Encrypted}{Logical. Specifies whether the destination AMI of the imported image should be encrypted.[optional]}
 
-\item{Hypervisor}{String.   The target hypervisor platform.  Valid values: \code{xen}  [optional]}
+\item{Hypervisor}{Character.   The target hypervisor platform.  Valid values: \code{xen}  [optional]}
 
-\item{KmsKeyId}{String.   An identifier for the symmetric AWS Key Management Service (AWS KMS) customer master key (CMK)...[optional]}
+\item{KmsKeyId}{Character.   An identifier for the symmetric AWS Key Management Service (AWS KMS) customer master key (CMK)...[optional]}
 
-\item{LicenseType}{String.   The license type to be used for the Amazon Machine Image (AMI) after importing.[optional]}
+\item{LicenseType}{Character.   The license type to be used for the Amazon Machine Image (AMI) after importing.[optional]}
 
-\item{Platform}{String.   The operating system of the virtual machine.  Valid values: \code{Windows} \| \code{Linux}  [optional]}
+\item{Platform}{Character.   The operating system of the virtual machine.  Valid values: \code{Windows} \| \code{Linux}  [optional]}
 
-\item{RoleName}{String. The name of the role to use when not using the default role, \'vmimport\'.[optional]}
+\item{RoleName}{Character. The name of the role to use when not using the default role, \'vmimport\'.[optional]}
 
 \item{LicenseSpecifications}{List. The ARNs of the license configurations.[optional]}
 
@@ -57,6 +61,18 @@ in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

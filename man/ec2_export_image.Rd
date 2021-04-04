@@ -14,23 +14,27 @@ ec2_export_image(
   RoleName = NULL,
   TagSpecification = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
-\item{DiskImageFormat}{String. The disk image format.}
+\item{DiskImageFormat}{Character. The disk image format.}
 
-\item{ImageId}{String. The ID of the image.}
+\item{ImageId}{Character. The ID of the image.}
 
 \item{S3ExportLocation}{Object. Information about the destination Amazon S3 bucket.}
 
-\item{ClientToken}{String. Token to enable idempotency for export image requests.[optional]}
+\item{ClientToken}{Character. Token to enable idempotency for export image requests.[optional]}
 
-\item{Description}{String. A description of the image being exported. The maximum length is 255 characters.[optional]}
+\item{Description}{Character. A description of the image being exported. The maximum length is 255 characters.[optional]}
 
 \item{DryRun}{Logical. Checks whether you have the required permissions for the action, without actually making the request,...[optional]}
 
-\item{RoleName}{String. The name of the role that grants VM Import/Export permission to export images to your Amazon S3 bucket....[optional]}
+\item{RoleName}{Character. The name of the role that grants VM Import/Export permission to export images to your Amazon S3 bucket....[optional]}
 
 \item{TagSpecification}{List. The tags to apply to the export image task during creation.[optional]}
 
@@ -39,6 +43,18 @@ in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

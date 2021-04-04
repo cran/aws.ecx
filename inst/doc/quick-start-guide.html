@@ -201,6 +201,10 @@ hr {
 </head>
 
 <body>
+<p><a href="https://cran.r-project.org/package=aws.ecx"><img src="https://www.r-pkg.org/badges/version/aws.ecx?color=green" alt=""/></a>
+<a href="https://github.com/Jiefei-Wang/aws.ecx"><img src="https://img.shields.io/badge/devel%20version-1.0.4-orange.svg" alt=""/></a>
+<a href="https://cran.r-project.org/package=aws.ecx"><img src="http://cranlogs.r-pkg.org/badges/last-month/aws.ecx?color=blue" alt=""/></a></p>
+
 <h1>Introduction</h1>
 
 <p>This package aims to provide the functions for communicating with Amazon Web Services(AWS) Elastic Container Service(ECS) using AWS REST APIs. The ECS functions start with the prefix <code>ecs_</code> and EC2 functions start with <code>ec2_</code>. The general-purpose functions have the prefix <code>aws_</code>.</p>
@@ -219,25 +223,35 @@ hr {
 #&gt; [1] &quot;mL**********************************XGGH&quot;
 #&gt; 
 #&gt; $region
-#&gt; [1] &quot;us-east-1&quot;
+#&gt; [1] &quot;ap-southeast-1&quot;
 </code></pre>
 
-<p>You can either explicitly provide the credentials by the function arguments or rely on the locator to automatically find your credentials. There are many ways to locate the credentials but the most important methods are as follow(sorted by the search order):</p>
+<p>The function <code>aws_set_credentials</code> sets both the credentials and the region of the AWS service. You can either explicitly provide them by the function arguments or rely on the locator to automatically find your credentials. There are many ways to locate the credentials but the most important methods are as follow(sorted by the search order):</p>
 
 <ol>
 <li><p>environment variables <code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_ACCESS_KEY</code>, <code>AWS_DEFAULT_REGION</code>, and <code>AWS_SESSION_TOKEN</code></p></li>
 <li><p>a profile in a global credentials dot file in a location set by <code>AWS_SHARED_CREDENTIALS_FILE</code> or defaulting typically to <code>&quot;~/.aws/credentials&quot;</code> (or another OS-specific location), using the profile specified by <code>AWS_PROFILE</code></p></li>
 </ol>
 
-<p>Users can find the details on how the credentials are located from <code>?aws.signature::locate_credentials</code>.</p>
+<p>Users can find the details on how the credentials are located from <code>?aws.signature::locate_credentials</code>. A list of AWS regions can be found by calling the function <code>aws_list_regions</code>. </p>
+
+<pre><code class="r">aws_list_regions()
+#&gt;  [1] &quot;us-east-1&quot;      &quot;us-east-2&quot;      &quot;us-west-1&quot;      &quot;us-west-2&quot;      &quot;us-gov-west-1&quot; 
+#&gt;  [6] &quot;us-gov-east-1&quot;  &quot;ca-central-1&quot;   &quot;eu-north-1&quot;     &quot;eu-west-1&quot;      &quot;eu-west-2&quot;     
+#&gt; [11] &quot;eu-west-3&quot;      &quot;eu-central-1&quot;   &quot;eu-south-1&quot;     &quot;af-south-1&quot;     &quot;ap-northeast-1&quot;
+#&gt; [16] &quot;ap-northeast-2&quot; &quot;ap-northeast-3&quot; &quot;ap-southeast-1&quot; &quot;ap-southeast-2&quot; &quot;ap-east-1&quot;     
+#&gt; [21] &quot;ap-south-1&quot;     &quot;sa-east-1&quot;      &quot;me-south-1&quot;
+</code></pre>
 
 <h1>Call the functions</h1>
 
 <p>Calling the EC2 or ECS function is simple, for example, you can list all ECS clusters via</p>
 
 <pre><code class="r">ecs_list_clusters()
-#&gt; [1] &quot;arn:aws:ecs:us-east-1:020007817719:cluster/demo&quot;            
-#&gt; [2] &quot;arn:aws:ecs:us-east-1:020007817719:cluster/R-worker-cluster&quot;
+#&gt; REST request failed with the message:
+#&gt;  Timeout was reached: [ecs.ap-southeast-1.amazonaws.com] Send failure: Connection was aborted
+#&gt; [1] &quot;arn:aws:ecs:ap-southeast-1:020007817719:cluster/R-worker-cluster&quot;
+#&gt; [2] &quot;arn:aws:ecs:ap-southeast-1:020007817719:cluster/test&quot;
 </code></pre>
 
 <p>The original EC2 and ECS APIs accept the request parameter via the query parameter or header and return the result by JSON or XML text in the REST request. The package provides a unified way to call both APIs. The request parameters can be given by the function arguments and the result is returned in a list format. If possible, the package will try to simplify the result and return a simple character vector. It will also handle the <code>nextToken</code> parameter in the REST APIs and collect the full result in a single function call. This default behavior can be turned off by providing the parameter <code>simplefy = FALSE</code>.</p>
@@ -246,7 +260,9 @@ hr {
 
 <h2>A note for the AWS EC2 functions</h2>
 
-<p>While the AWS Documentation is very helpful in finding the API use cases. There are some inconsistencies between the AWS Documentation and the package functions. Certain request parameters will get special treatment in this package. For example, here is an example of <code>DescribeVpcs</code>from the <a href="https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeVpcs.html">AWS Documentation</a> which describes the specified VPCs</p>
+<h3>Array</h3>
+
+<p>While the AWS Documentation is very helpful in finding the API use cases. There are some inconsistencies between the AWS Documentation and the package functions. To be more specific, the array type parameter will get a special treatment in this package. For example, here is an example for <code>DescribeVpcs</code> from the <a href="https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeVpcs.html">AWS Documentation</a> which describes the specified VPCs</p>
 
 <pre><code>https://ec2.amazonaws.com/?Action=DescribeVpcs
 &amp;VpcId.1=vpc-081ec835f3EXAMPLE
@@ -254,14 +270,88 @@ hr {
 &amp;VpcId.3=vpc-06e4ab6c6cEXAMPLE
 </code></pre>
 
-<p>The <code>VpcId</code> is an array object in the AWS Documentation. for the corresponding R function <code>ec2_describe_vpcs</code>, the VPCs are provided by a vector or a list object. For example, you can describe the same VPCs via</p>
+<p>The <code>VpcId</code> is so-called array object in the AWS Documentation. The package uses a vector or a list to represent the array object. The dot <code>.</code> in the array can be explained as <code>[[</code> and anything followed by the dot can be explained as the index. Therefore, the corresponding R expression for <code>VpcId</code> is</p>
 
-<pre><code>ec2_describe_vpcs(
-  VpcId = c(&quot;vpc-081ec835f3EXAMPLE&quot;,
-  &quot;vpc-0ee975135dEXAMPLE&quot;,
-  &quot;vpc-06e4ab6c6cEXAMPLE&quot;)
-)
+<pre><code class="r">## VpcId can also be a character vector
+VpcId &lt;- list()
+VpcId[[1]] &lt;- &quot;vpc-081ec835f3EXAMPLE&quot;
+VpcId[[2]] &lt;- &quot;vpc-0ee975135dEXAMPLE&quot;
+VpcId[[3]] &lt;- &quot;vpc-06e4ab6c6cEXAMPLE&quot;
+
+VpcId
+#&gt; [[1]]
+#&gt; [1] &quot;vpc-081ec835f3EXAMPLE&quot;
+#&gt; 
+#&gt; [[2]]
+#&gt; [1] &quot;vpc-0ee975135dEXAMPLE&quot;
+#&gt; 
+#&gt; [[3]]
+#&gt; [1] &quot;vpc-06e4ab6c6cEXAMPLE&quot;
 </code></pre>
+
+<p>and the same request in R can be made by</p>
+
+<pre><code>ec2_describe_vpcs(VpcId = VpcId)
+</code></pre>
+
+<p>Internally, <code>VpcId</code> will be converted to an array object using the function <code>list_to_array</code>, e.g.</p>
+
+<pre><code class="r">## The first argument is the parameter prefix
+## The second argument should be a (named) vector or list
+list_to_array(&quot;VpcId&quot;, VpcId)
+#&gt; $VpcId.1
+#&gt; [1] &quot;vpc-081ec835f3EXAMPLE&quot;
+#&gt; 
+#&gt; $VpcId.2
+#&gt; [1] &quot;vpc-0ee975135dEXAMPLE&quot;
+#&gt; 
+#&gt; $VpcId.3
+#&gt; [1] &quot;vpc-06e4ab6c6cEXAMPLE&quot;
+</code></pre>
+
+<p>Just like list can be nested, the array object can be nested as well. For example, if we have a <code>tags</code> array like</p>
+
+<pre><code>tags.1.name = name-example
+tags.1.value.1 = value-example1
+tags.1.value.2 = value-example2
+</code></pre>
+
+<p>Using the array rule we mentioned above, the corresponding R expression is</p>
+
+<pre><code class="r">tags &lt;- list()
+tags[[1]] &lt;- list()
+tags[[1]][[&quot;name&quot;]] &lt;- &quot;name-example&quot;
+tags[[1]][[&quot;value&quot;]] &lt;- list()
+tags[[1]][[&quot;value&quot;]][[1]] &lt;- &quot;value-example1&quot;
+tags[[1]][[&quot;value&quot;]][[2]] &lt;- &quot;value-example2&quot;
+
+tags
+#&gt; [[1]]
+#&gt; [[1]]$name
+#&gt; [1] &quot;name-example&quot;
+#&gt; 
+#&gt; [[1]]$value
+#&gt; [[1]]$value[[1]]
+#&gt; [1] &quot;value-example1&quot;
+#&gt; 
+#&gt; [[1]]$value[[2]]
+#&gt; [1] &quot;value-example2&quot;
+</code></pre>
+
+<p>We can verify the request parameter using <code>list_to_array</code></p>
+
+<pre><code class="r">list_to_array(&quot;tags&quot;, tags)
+#&gt; $tags.1.name
+#&gt; [1] &quot;name-example&quot;
+#&gt; 
+#&gt; $tags.1.value.1
+#&gt; [1] &quot;value-example1&quot;
+#&gt; 
+#&gt; $tags.1.value.2
+#&gt; [1] &quot;value-example2&quot;
+</code></pre>
+
+<h3>Filter</h3>
 
 <p>A even more aggressive change can be found on the <code>Filter</code> parameter. Here is an example of describing VPCs which satisfy some specific conditions from the <a href="https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeVpcs.html">AWS Documentation</a></p>
 
@@ -273,7 +363,7 @@ hr {
 &amp;Filter.2.Value.1=available
 </code></pre>
 
-<p>The corresponding R function call is</p>
+<p>The <code>Filter</code> parameter is, of course, an array object in AWS documentation. However, it is clearly redundant to specify the filter&#39;s name and value separately. Therefore, the package allows users to provide the filter as a named list. The same request in R can be given by</p>
 
 <pre><code>ec2_describe_vpcs(
   Filter = list(
@@ -283,7 +373,7 @@ hr {
 )
 </code></pre>
 
-<p>The <code>Filter</code> parameter will be converted into a list object internally which meets the AWS format requirement. If you are unsure about whether you has specified the correct filter, you can check the converted filter values via</p>
+<p>The <code>Filter</code> parameter will be converted into a list object which meets the AWS filter requirement. If you are unsure about whether you has specified the correct filter, you can check the converted filter values via</p>
 
 <pre><code class="r">filter &lt;- list(
     `dhcp-options-id` = c(&quot;dopt-7a8b9c2d&quot;, &quot;dopt-2b2a3d3c&quot;),
@@ -308,7 +398,7 @@ list_to_filter(filter)
 
 <h2>A note for the AWS ECS functions</h2>
 
-<p>The AWS ECS API uses JSON format to store the request parameter. Therefore, the ECS R functions will use <code>rjson::toJSON</code> to convert the request parameters into JSON objects. If you are not sure if you use the parameter correctly, you can manually run <code>rjson::toJSON</code> and compare the result with the example provided in AWS documentation. For example, the request syntax for the <code>tag</code> parameter in <code>CreateCluster</code> API is </p>
+<p>The AWS ECS API uses JSON format to assemble the request parameter. Therefore, the ECS functions will call <code>rjson::toJSON</code> to convert the request parameters into JSON objects. If you are not sure if you use the parameter correctly, you can manually run <code>rjson::toJSON</code> and compare the result with the example provided in AWS documentation. For example, the request syntax for the <code>tags</code> parameter in <code>CreateCluster</code> API is </p>
 
 <pre><code>&quot;tags&quot;: [ 
          { 
@@ -345,10 +435,14 @@ list_to_filter(filter)
 aws_get_print_on_error()
 #&gt; [1] TRUE
 aws_get_network_timeout()
-#&gt; [1] 10
+#&gt; [1] 2
 </code></pre>
 
-<p><code>retry_time</code> determines the number of time the function will retry when network error occurs before throwing an error. If <code>print_on_error</code> is set to <code>False</code>, no message will be given when the network error has occurred and the package will silently resend the REST request. <code>network_timeout</code> decides how long the function will wait before it fails. They can be changed via the corresponding setters(e.g. <code>aws_set_retry_time</code>).</p>
+<p><code>retry_time</code> determines the number of time the function will retry when network error occurs before throwing an error. If <code>print_on_error</code> is set to <code>False</code>, no message will be given when the network error has occurred and the package will silently resend the REST request. <code>network_timeout</code> decides how long the function will wait before it fails. They can be changed via the corresponding setters(e.g. <code>aws_set_retry_time</code>). You can also temporary alter the setting by providing the package setting as a parameter in the EC2 or ECS function.</p>
+
+<h1>Warning</h1>
+
+<p>Not all AWS APIs are idempotent, especially for the functions that need to allocate resources on AWS(e.g. <code>ecs_start_task</code>). If you plan to use the AWS function in your package, special handle for the network issue is required for the non-idempotent API to avoid a double allocation. </p>
 
 <h1>Session info</h1>
 
@@ -365,22 +459,39 @@ aws_get_network_timeout()
 #&gt; [5] LC_TIME=English_United States.1252    
 #&gt; 
 #&gt; attached base packages:
-#&gt; [1] parallel  stats4    stats     graphics  grDevices utils     datasets  methods  
-#&gt; [9] base     
+#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     
 #&gt; 
 #&gt; other attached packages:
-#&gt; [1] aws.ecx_0.99.0      S4Vectors_0.28.0    BiocGenerics_0.36.0 rjson_0.2.20       
-#&gt; [5] rmarkdown_2.7       whisker_0.4         rapiclient_0.1.3    testthat_3.0.2     
+#&gt; [1] aws.ecx_1.0.4
 #&gt; 
 #&gt; loaded via a namespace (and not attached):
-#&gt;  [1] rstudioapi_0.13     xml2_1.3.2          knitr_1.31          magrittr_1.5       
-#&gt;  [5] pkgload_1.1.0       aws.signature_0.6.0 R6_2.5.0            rlang_0.4.10       
-#&gt;  [9] stringr_1.4.0       httr_1.4.2          tools_4.0.4         xfun_0.19          
-#&gt; [13] cli_2.3.1           withr_2.3.0         htmltools_0.5.0     yaml_2.2.1         
-#&gt; [17] assertthat_0.2.1    digest_0.6.27       rprojroot_2.0.2     crayon_1.3.4       
-#&gt; [21] base64enc_0.1-3     curl_4.3            glue_1.4.2          evaluate_0.14      
-#&gt; [25] stringi_1.5.3       compiler_4.0.4      desc_1.2.0          jsonlite_1.7.2
+#&gt;  [1] tidyselect_1.1.0    xfun_0.19           remotes_2.2.0       purrr_0.3.4        
+#&gt;  [5] generics_0.1.0      vctrs_0.3.4         colorspace_2.0-0    testthat_3.0.2     
+#&gt;  [9] usethis_1.6.3       htmltools_0.5.0     stats4_4.0.4        yaml_2.2.1         
+#&gt; [13] base64enc_0.1-3     rlang_0.4.10        pkgbuild_1.1.0      pillar_1.4.6       
+#&gt; [17] rapiclient_0.1.3    glue_1.4.2          withr_2.3.0         BiocGenerics_0.36.0
+#&gt; [21] RColorBrewer_1.1-2  sessioninfo_1.1.1   rvcheck_0.1.8       lifecycle_0.2.0    
+#&gt; [25] stringr_1.4.0       dlstats_0.1.3       munsell_0.5.0       commonmark_1.7     
+#&gt; [29] gtable_0.3.0        devtools_2.3.2      memoise_1.1.0       evaluate_0.14      
+#&gt; [33] knitr_1.31          callr_3.5.1         ps_1.4.0            curl_4.3           
+#&gt; [37] parallel_4.0.4      Rcpp_1.0.5          BiocManager_1.30.10 scales_1.1.1       
+#&gt; [41] formatR_1.8         S4Vectors_0.28.0    desc_1.2.0          pkgload_1.1.0      
+#&gt; [45] jsonlite_1.7.2      fs_1.5.0            rjson_0.2.20        ggplot2_3.3.2      
+#&gt; [49] digest_0.6.27       stringi_1.5.3       dplyr_1.0.2         processx_3.4.4     
+#&gt; [53] rprojroot_2.0.2     grid_4.0.4          cli_2.3.1           tools_4.0.4        
+#&gt; [57] magrittr_1.5        tibble_3.0.4        pkgconfig_2.0.3     crayon_1.3.4       
+#&gt; [61] aws.signature_0.6.0 whisker_0.4         ellipsis_0.3.1      xml2_1.3.2         
+#&gt; [65] prettyunits_1.1.1   assertthat_0.2.1    rmarkdown_2.7       httr_1.4.2         
+#&gt; [69] roxygen2_7.1.1      rstudioapi_0.13     badger_0.0.9        R6_2.5.0           
+#&gt; [73] compiler_4.0.4
 </code></pre>
+
+<h1>future work</h1>
+
+<ol>
+<li><p>Convert parameter type if it does not meet the AWS type requirement. Done</p></li>
+<li><p>add link to the function documentation</p></li>
+</ol>
 
 </body>
 

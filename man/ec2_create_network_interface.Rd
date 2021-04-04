@@ -17,13 +17,17 @@ ec2_create_network_interface(
   InterfaceType = NULL,
   TagSpecification = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
-\item{SubnetId}{String. The ID of the subnet to associate with the network interface.}
+\item{SubnetId}{Character. The ID of the subnet to associate with the network interface.}
 
-\item{Description}{String. A description for the network interface.[optional]}
+\item{Description}{Character. A description for the network interface.[optional]}
 
 \item{DryRun}{Logical. Checks whether you have the required permissions for the action, without actually making the request,...[optional]}
 
@@ -33,13 +37,13 @@ ec2_create_network_interface(
 
 \item{Ipv6Addresses}{List. One or more specific IPv6 addresses from the IPv6 CIDR block range of your subnet.[optional]}
 
-\item{PrivateIpAddress}{String. The primary private IPv4 address of the network interface.[optional]}
+\item{PrivateIpAddress}{Character. The primary private IPv4 address of the network interface.[optional]}
 
 \item{PrivateIpAddresses}{List. One or more private IPv4 addresses.[optional]}
 
 \item{SecondaryPrivateIpAddressCount}{Integer.   The number of secondary private IPv4 addresses to assign to a network interface.[optional]}
 
-\item{InterfaceType}{String. Indicates the type of network interface.[optional]}
+\item{InterfaceType}{Character. Indicates the type of network interface.[optional]}
 
 \item{TagSpecification}{List. The tags to apply to the new network interface.[optional]}
 
@@ -48,6 +52,18 @@ in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

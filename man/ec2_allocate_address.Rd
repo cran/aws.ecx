@@ -13,19 +13,23 @@ ec2_allocate_address(
   DryRun = NULL,
   TagSpecification = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
-\item{Domain}{String.   Indicates whether the Elastic IP address is for use with instances in a VPC or instances in EC2-Classic....[optional]}
+\item{Domain}{Character.   Indicates whether the Elastic IP address is for use with instances in a VPC or instances in EC2-Classic....[optional]}
 
-\item{Address}{String. [EC2-VPC] The Elastic IP address to recover or an IPv4 address from an address pool.[optional]}
+\item{Address}{Character. [EC2-VPC] The Elastic IP address to recover or an IPv4 address from an address pool.[optional]}
 
-\item{PublicIpv4Pool}{String. The ID of an address pool that you own.[optional]}
+\item{PublicIpv4Pool}{Character. The ID of an address pool that you own.[optional]}
 
-\item{NetworkBorderGroup}{String.   A unique set of Availability Zones, Local Zones, or Wavelength Zones from which AWS advertises...[optional]}
+\item{NetworkBorderGroup}{Character.   A unique set of Availability Zones, Local Zones, or Wavelength Zones from which AWS advertises...[optional]}
 
-\item{CustomerOwnedIpv4Pool}{String. The ID of a customer-owned address pool.[optional]}
+\item{CustomerOwnedIpv4Pool}{Character. The ID of a customer-owned address pool.[optional]}
 
 \item{DryRun}{Logical. Checks whether you have the required permissions for the action, without actually making the request,...[optional]}
 
@@ -36,6 +40,18 @@ in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

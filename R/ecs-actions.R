@@ -4,7 +4,7 @@
 #' an Amazon ECS cluster and are used in capacity provider strategies to
 #' facilitate cluster auto scaling.
 #' 
-#' @param name String. The name of the capacity provider.
+#' @param name Character. The name of the capacity provider.
 #' @param autoScalingGroupProvider Object. The details of the Auto Scaling group for the capacity provider.
 #' @param tags List.   The metadata that you apply to the capacity provider to help you categorize and organize them.
 #' @inheritParams CommonDoc
@@ -50,19 +50,22 @@
 #' 
 #' @return A list object or a character vector
 #' @export
-ecs_create_capacity_provider <- function(name = NULL, autoScalingGroupProvider = NULL, tags = NULL, 
-    simplify = TRUE, others = list()) {
-    parameters <- c(others, list(name = name, autoScalingGroupProvider = autoScalingGroupProvider, 
-        tags = as.list(tags)))
+ecs_create_capacity_provider <- function(name = NULL, autoScalingGroupProvider = NULL, tags = NULL, simplify = TRUE, 
+    others = list(), print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
+    tags <- as.list(tags)
+    autoScalingGroupProvider <- as.list(autoScalingGroupProvider)
+    parameters <- c(others, list(name = name, autoScalingGroupProvider = autoScalingGroupProvider, tags = tags))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "CreateCapacityProvider", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
 #' Create Cluster
 #' 
-#' @param clusterName String. The name of your cluster.
+#' @param clusterName Character. The name of your cluster.
 #' @param tags List.   The metadata that you apply to the cluster to help you categorize and organize them.
 #' @param settings List. The setting to use when creating a cluster.
 #' @param capacityProviders List.   The short name of one or more capacity providers to associate with the cluster.
@@ -161,38 +164,44 @@ ecs_create_capacity_provider <- function(name = NULL, autoScalingGroupProvider =
 #' @return A list object or a character vector
 #' @export
 ecs_create_cluster <- function(clusterName = NULL, tags = NULL, settings = NULL, capacityProviders = NULL, 
-    defaultCapacityProviderStrategy = NULL, simplify = TRUE, others = list()) {
-    parameters <- c(others, list(clusterName = clusterName, tags = as.list(tags), settings = as.list(settings), 
-        capacityProviders = as.list(capacityProviders), defaultCapacityProviderStrategy = as.list(defaultCapacityProviderStrategy)))
+    defaultCapacityProviderStrategy = NULL, simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), 
+    retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
+    tags <- as.list(tags)
+    settings <- as.list(settings)
+    capacityProviders <- as.list(capacityProviders)
+    defaultCapacityProviderStrategy <- as.list(defaultCapacityProviderStrategy)
+    parameters <- c(others, list(clusterName = clusterName, tags = tags, settings = settings, capacityProviders = capacityProviders, 
+        defaultCapacityProviderStrategy = defaultCapacityProviderStrategy))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
-    make_request(service_request = ecs_request, action = "CreateCluster", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+    make_request(service_request = ecs_request, action = "CreateCluster", parameters = parameters, simplify = simplify, 
+        token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, network_timeout = network_timeout, 
+        region = region)
 }
 
 
 #' Create Service
 #' 
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster on which to run your service.
-#' @param serviceName String. The name of your service.
-#' @param taskDefinition String.   The `family` and `revision` (`family:revision`) or full ARN of the task definition to run in your...
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster on which to run your service.
+#' @param serviceName Character. The name of your service.
+#' @param taskDefinition Character.   The `family` and `revision` (`family:revision`) or full ARN of the task definition to run in your...
 #' @param loadBalancers List.   A load balancer object representing the load balancers to use with your service.
 #' @param serviceRegistries List.   The details of the service discovery registries to assign to this service.
 #' @param desiredCount Integer.   The number of instantiations of the specified task definition to place and keep running on your...
-#' @param clientToken String. Unique, case-sensitive identifier that you provide to ensure the idempotency of the request.
-#' @param launchType String.   The launch type on which to run your service.
+#' @param clientToken Character. Unique, case-sensitive identifier that you provide to ensure the idempotency of the request.
+#' @param launchType Character.   The launch type on which to run your service.
 #' @param capacityProviderStrategy List.   The capacity provider strategy to use for the service.
-#' @param platformVersion String. The platform version that your tasks in the service are running on.
-#' @param role String.   The name or full Amazon Resource Name (ARN) of the IAM role that allows Amazon ECS to make calls...
+#' @param platformVersion Character. The platform version that your tasks in the service are running on.
+#' @param role Character.   The name or full Amazon Resource Name (ARN) of the IAM role that allows Amazon ECS to make calls...
 #' @param deploymentConfiguration Object. Optional deployment parameters that control how many tasks run during the deployment and the ordering...
 #' @param placementConstraints List. An array of placement constraint objects to use for tasks in your service.
 #' @param placementStrategy List. The placement strategy objects to use for tasks in your service.
 #' @param networkConfiguration Object. The network configuration for the service.
 #' @param healthCheckGracePeriodSeconds Integer.   The period of time, in seconds, that the Amazon ECS service scheduler should ignore unhealthy Elastic...
-#' @param schedulingStrategy String.   The scheduling strategy to use for the service.
+#' @param schedulingStrategy Character.   The scheduling strategy to use for the service.
 #' @param deploymentController Object. The deployment controller to use for the service.
 #' @param tags List.   The metadata that you apply to the service to help you categorize and organize them.
 #' @param enableECSManagedTags Logical. Specifies whether to enable Amazon ECS managed tags for the tasks within the service.
-#' @param propagateTags String. Specifies whether to propagate the tags from the task definition or the service to the tasks in the...
+#' @param propagateTags Character. Specifies whether to propagate the tags from the task definition or the service to the tasks in the...
 #' @inheritParams CommonDoc
 #' 
 #' @section cluster:
@@ -491,20 +500,31 @@ ecs_create_cluster <- function(clusterName = NULL, tags = NULL, settings = NULL,
 ecs_create_service <- function(cluster = NULL, serviceName = NULL, taskDefinition = NULL, loadBalancers = NULL, 
     serviceRegistries = NULL, desiredCount = NULL, clientToken = NULL, launchType = NULL, capacityProviderStrategy = NULL, 
     platformVersion = NULL, role = NULL, deploymentConfiguration = NULL, placementConstraints = NULL, 
-    placementStrategy = NULL, networkConfiguration = NULL, healthCheckGracePeriodSeconds = NULL, 
-    schedulingStrategy = NULL, deploymentController = NULL, tags = NULL, enableECSManagedTags = NULL, 
-    propagateTags = NULL, simplify = TRUE, others = list()) {
+    placementStrategy = NULL, networkConfiguration = NULL, healthCheckGracePeriodSeconds = NULL, schedulingStrategy = NULL, 
+    deploymentController = NULL, tags = NULL, enableECSManagedTags = NULL, propagateTags = NULL, simplify = TRUE, 
+    others = list(), print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
+    loadBalancers <- as.list(loadBalancers)
+    serviceRegistries <- as.list(serviceRegistries)
+    capacityProviderStrategy <- as.list(capacityProviderStrategy)
+    placementConstraints <- as.list(placementConstraints)
+    placementStrategy <- as.list(placementStrategy)
+    tags <- as.list(tags)
+    deploymentConfiguration <- as.list(deploymentConfiguration)
+    networkConfiguration <- as.list(networkConfiguration)
+    deploymentController <- as.list(deploymentController)
     parameters <- c(others, list(cluster = cluster, serviceName = serviceName, taskDefinition = taskDefinition, 
-        desiredCount = desiredCount, clientToken = clientToken, launchType = launchType, platformVersion = platformVersion, 
-        role = role, deploymentConfiguration = deploymentConfiguration, networkConfiguration = networkConfiguration, 
+        loadBalancers = loadBalancers, serviceRegistries = serviceRegistries, desiredCount = desiredCount, 
+        clientToken = clientToken, launchType = launchType, capacityProviderStrategy = capacityProviderStrategy, 
+        platformVersion = platformVersion, role = role, deploymentConfiguration = deploymentConfiguration, 
+        placementConstraints = placementConstraints, placementStrategy = placementStrategy, networkConfiguration = networkConfiguration, 
         healthCheckGracePeriodSeconds = healthCheckGracePeriodSeconds, schedulingStrategy = schedulingStrategy, 
-        deploymentController = deploymentController, enableECSManagedTags = enableECSManagedTags, 
-        propagateTags = propagateTags, loadBalancers = as.list(loadBalancers), serviceRegistries = as.list(serviceRegistries), 
-        capacityProviderStrategy = as.list(capacityProviderStrategy), placementConstraints = as.list(placementConstraints), 
-        placementStrategy = as.list(placementStrategy), tags = as.list(tags)))
+        deploymentController = deploymentController, tags = tags, enableECSManagedTags = enableECSManagedTags, 
+        propagateTags = propagateTags))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
-    make_request(service_request = ecs_request, action = "CreateService", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+    make_request(service_request = ecs_request, action = "CreateService", parameters = parameters, simplify = simplify, 
+        token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, network_timeout = network_timeout, 
+        region = region)
 }
 
 
@@ -517,18 +537,18 @@ ecs_create_service <- function(cluster = NULL, serviceName = NULL, taskDefinitio
 #' in the *Amazon Elastic Container Service Developer
 #' Guide*.
 #' 
-#' @param service String. The short name or full Amazon Resource Name (ARN) of the service to create the task set in.
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the service to create...
-#' @param externalId String. An optional non-unique tag that identifies this task set in external systems.
-#' @param taskDefinition String. The task definition for the tasks in the task set to use.
+#' @param service Character. The short name or full Amazon Resource Name (ARN) of the service to create the task set in.
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the service to create...
+#' @param externalId Character. An optional non-unique tag that identifies this task set in external systems.
+#' @param taskDefinition Character. The task definition for the tasks in the task set to use.
 #' @param networkConfiguration No description can be found.
 #' @param loadBalancers List. A load balancer object representing the load balancer to use with the task set.
 #' @param serviceRegistries List. The details of the service discovery registries to assign to this task set.
-#' @param launchType String.   The launch type that new tasks in the task set will use.
+#' @param launchType Character.   The launch type that new tasks in the task set will use.
 #' @param capacityProviderStrategy List.   The capacity provider strategy to use for the task set.
-#' @param platformVersion String. The platform version that the tasks in the task set should use.
+#' @param platformVersion Character. The platform version that the tasks in the task set should use.
 #' @param scale No description can be found.
-#' @param clientToken String. Unique, case-sensitive identifier that you provide to ensure the idempotency of the request.
+#' @param clientToken Character. Unique, case-sensitive identifier that you provide to ensure the idempotency of the request.
 #' @param tags List.   The metadata that you apply to the task set to help you categorize and organize them.
 #' @inheritParams CommonDoc
 #' 
@@ -647,17 +667,22 @@ ecs_create_service <- function(cluster = NULL, serviceName = NULL, taskDefinitio
 #' @return A list object or a character vector
 #' @export
 ecs_create_task_set <- function(service = NULL, cluster = NULL, externalId = NULL, taskDefinition = NULL, 
-    networkConfiguration = NULL, loadBalancers = NULL, serviceRegistries = NULL, launchType = NULL, 
-    capacityProviderStrategy = NULL, platformVersion = NULL, scale = NULL, clientToken = NULL, 
-    tags = NULL, simplify = TRUE, others = list()) {
-    parameters <- c(others, list(service = service, cluster = cluster, externalId = externalId, 
-        taskDefinition = taskDefinition, networkConfiguration = networkConfiguration, launchType = launchType, 
-        platformVersion = platformVersion, scale = scale, clientToken = clientToken, loadBalancers = as.list(loadBalancers), 
-        serviceRegistries = as.list(serviceRegistries), capacityProviderStrategy = as.list(capacityProviderStrategy), 
-        tags = as.list(tags)))
+    networkConfiguration = NULL, loadBalancers = NULL, serviceRegistries = NULL, launchType = NULL, capacityProviderStrategy = NULL, 
+    platformVersion = NULL, scale = NULL, clientToken = NULL, tags = NULL, simplify = TRUE, others = list(), 
+    print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
+    loadBalancers <- as.list(loadBalancers)
+    serviceRegistries <- as.list(serviceRegistries)
+    capacityProviderStrategy <- as.list(capacityProviderStrategy)
+    tags <- as.list(tags)
+    parameters <- c(others, list(service = service, cluster = cluster, externalId = externalId, taskDefinition = taskDefinition, 
+        networkConfiguration = networkConfiguration, loadBalancers = loadBalancers, serviceRegistries = serviceRegistries, 
+        launchType = launchType, capacityProviderStrategy = capacityProviderStrategy, platformVersion = platformVersion, 
+        scale = scale, clientToken = clientToken, tags = tags))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
-    make_request(service_request = ecs_request, action = "CreateTaskSet", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+    make_request(service_request = ecs_request, action = "CreateTaskSet", parameters = parameters, simplify = simplify, 
+        token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, network_timeout = network_timeout, 
+        region = region)
 }
 
 
@@ -667,8 +692,8 @@ ecs_create_task_set <- function(service = NULL, cluster = NULL, externalId = NUL
 #' IAM user, IAM role, or the root user for an
 #' account.
 #' 
-#' @param name String. The resource name for which to disable the account setting.
-#' @param principalArn String. The ARN of the principal, which can be an IAM user, IAM role, or the root user.
+#' @param name Character. The resource name for which to disable the account setting.
+#' @param principalArn Character. The ARN of the principal, which can be an IAM user, IAM role, or the root user.
 #' @inheritParams CommonDoc
 #' 
 #' @section name:
@@ -689,11 +714,14 @@ ecs_create_task_set <- function(service = NULL, cluster = NULL, externalId = NUL
 #' for the authenticated user.
 #' @return A list object or a character vector
 #' @export
-ecs_delete_account_setting <- function(name = NULL, principalArn = NULL, simplify = TRUE, others = list()) {
+ecs_delete_account_setting <- function(name = NULL, principalArn = NULL, simplify = TRUE, others = list(), 
+    print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
     parameters <- c(others, list(name = name, principalArn = principalArn))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "DeleteAccountSetting", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
@@ -702,7 +730,7 @@ ecs_delete_account_setting <- function(name = NULL, principalArn = NULL, simplif
 #' Deletes one or more custom attributes from
 #' an Amazon ECS resource.
 #' 
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster that contains the resource to delete...
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster that contains the resource to delete...
 #' @param attributes List. The attributes to delete from your resource.
 #' @inheritParams CommonDoc
 #' 
@@ -719,17 +747,21 @@ ecs_delete_account_setting <- function(name = NULL, principalArn = NULL, simplif
 #' also specify the target type.
 #' @return A list object or a character vector
 #' @export
-ecs_delete_attributes <- function(cluster = NULL, attributes = NULL, simplify = TRUE, others = list()) {
-    parameters <- c(others, list(cluster = cluster, attributes = as.list(attributes)))
+ecs_delete_attributes <- function(cluster = NULL, attributes = NULL, simplify = TRUE, others = list(), 
+    print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
+    attributes <- as.list(attributes)
+    parameters <- c(others, list(cluster = cluster, attributes = attributes))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "DeleteAttributes", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
 #' Delete Capacity Provider
 #' 
-#' @param capacityProvider String. The short name or full Amazon Resource Name (ARN) of the capacity provider to delete.
+#' @param capacityProvider Character. The short name or full Amazon Resource Name (ARN) of the capacity provider to delete.
 #' @inheritParams CommonDoc
 #' 
 #' @section capacityProvider:
@@ -738,17 +770,19 @@ ecs_delete_attributes <- function(cluster = NULL, attributes = NULL, simplify = 
 #' delete.
 #' @return A list object or a character vector
 #' @export
-ecs_delete_capacity_provider <- function(capacityProvider = NULL, simplify = TRUE, others = list()) {
+ecs_delete_capacity_provider <- function(capacityProvider = NULL, simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), 
+    retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
     parameters <- c(others, list(capacityProvider = capacityProvider))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "DeleteCapacityProvider", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
 #' Delete Cluster
 #' 
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster to delete.
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster to delete.
 #' @inheritParams CommonDoc
 #' 
 #' @section cluster:
@@ -756,18 +790,20 @@ ecs_delete_capacity_provider <- function(capacityProvider = NULL, simplify = TRU
 #' (ARN) of the cluster to delete.
 #' @return A list object or a character vector
 #' @export
-ecs_delete_cluster <- function(cluster = NULL, simplify = TRUE, others = list()) {
+ecs_delete_cluster <- function(cluster = NULL, simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), 
+    retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
     parameters <- c(others, list(cluster = cluster))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
-    make_request(service_request = ecs_request, action = "DeleteCluster", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+    make_request(service_request = ecs_request, action = "DeleteCluster", parameters = parameters, simplify = simplify, 
+        token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, network_timeout = network_timeout, 
+        region = region)
 }
 
 
 #' Delete Service
 #' 
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the service to delete.
-#' @param service String. The name of the service to delete.
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the service to delete.
+#' @param service Character. The name of the service to delete.
 #' @param force Logical. If `true`, allows you to delete a service even if it has not been scaled down to zero tasks.
 #' @inheritParams CommonDoc
 #' 
@@ -786,12 +822,14 @@ ecs_delete_cluster <- function(cluster = NULL, simplify = TRUE, others = list())
 #' strategy.
 #' @return A list object or a character vector
 #' @export
-ecs_delete_service <- function(cluster = NULL, service = NULL, force = NULL, simplify = TRUE, 
-    others = list()) {
+ecs_delete_service <- function(cluster = NULL, service = NULL, force = NULL, simplify = TRUE, others = list(), 
+    print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
     parameters <- c(others, list(cluster = cluster, service = service, force = force))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
-    make_request(service_request = ecs_request, action = "DeleteService", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+    make_request(service_request = ecs_request, action = "DeleteService", parameters = parameters, simplify = simplify, 
+        token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, network_timeout = network_timeout, 
+        region = region)
 }
 
 
@@ -804,9 +842,9 @@ ecs_delete_service <- function(cluster = NULL, service = NULL, force = NULL, sim
 #' in the *Amazon Elastic Container Service Developer
 #' Guide*.
 #' 
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the service that the...
-#' @param service String. The short name or full Amazon Resource Name (ARN) of the service that hosts the task set to delete.
-#' @param taskSet String. The task set ID or full Amazon Resource Name (ARN) of the task set to delete.
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the service that the...
+#' @param service Character. The short name or full Amazon Resource Name (ARN) of the service that hosts the task set to delete.
+#' @param taskSet Character. The task set ID or full Amazon Resource Name (ARN) of the task set to delete.
 #' @param force Logical. If `true`, this allows you to delete a task set even if it hasn\'t been scaled down to zero.
 #' @inheritParams CommonDoc
 #' 
@@ -827,19 +865,21 @@ ecs_delete_service <- function(cluster = NULL, service = NULL, force = NULL, sim
 #' zero.
 #' @return A list object or a character vector
 #' @export
-ecs_delete_task_set <- function(cluster = NULL, service = NULL, taskSet = NULL, force = NULL, 
-    simplify = TRUE, others = list()) {
+ecs_delete_task_set <- function(cluster = NULL, service = NULL, taskSet = NULL, force = NULL, simplify = TRUE, 
+    others = list(), print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
     parameters <- c(others, list(cluster = cluster, service = service, taskSet = taskSet, force = force))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
-    make_request(service_request = ecs_request, action = "DeleteTaskSet", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+    make_request(service_request = ecs_request, action = "DeleteTaskSet", parameters = parameters, simplify = simplify, 
+        token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, network_timeout = network_timeout, 
+        region = region)
 }
 
 
 #' Deregister Container Instance
 #' 
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the container instance...
-#' @param containerInstance String. The container instance ID or full ARN of the container instance to deregister.
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the container instance...
+#' @param containerInstance Character. The container instance ID or full ARN of the container instance to deregister.
 #' @param force Logical.   Forces the deregistration of the container instance.
 #' @inheritParams CommonDoc
 #' 
@@ -874,17 +914,19 @@ ecs_delete_task_set <- function(cluster = NULL, service = NULL, taskSet = NULL, 
 #' @return A list object or a character vector
 #' @export
 ecs_deregister_container_instance <- function(cluster = NULL, containerInstance = NULL, force = NULL, 
-    simplify = TRUE, others = list()) {
+    simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), 
+    network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
     parameters <- c(others, list(cluster = cluster, containerInstance = containerInstance, force = force))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "DeregisterContainerInstance", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
 #' Deregister Task Definition
 #' 
-#' @param taskDefinition String. The `family` and `revision` (`family:revision`) or full Amazon Resource Name (ARN) of the task definition...
+#' @param taskDefinition Character. The `family` and `revision` (`family:revision`) or full Amazon Resource Name (ARN) of the task definition...
 #' @inheritParams CommonDoc
 #' 
 #' @section taskDefinition:
@@ -893,11 +935,13 @@ ecs_deregister_container_instance <- function(cluster = NULL, containerInstance 
 #' You must specify a `revision`.
 #' @return A list object or a character vector
 #' @export
-ecs_deregister_task_definition <- function(taskDefinition = NULL, simplify = TRUE, others = list()) {
+ecs_deregister_task_definition <- function(taskDefinition = NULL, simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), 
+    retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
     parameters <- c(others, list(taskDefinition = taskDefinition))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "DeregisterTaskDefinition", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
@@ -935,12 +979,16 @@ ecs_deregister_task_definition <- function(taskDefinition = NULL, simplify = TRU
 #' @return A list object or a character vector
 #' @export
 ecs_describe_capacity_providers <- function(capacityProviders = NULL, include = NULL, maxResults = NULL, 
-    nextToken = NULL, simplify = TRUE, others = list()) {
-    parameters <- c(others, list(maxResults = maxResults, nextToken = nextToken, capacityProviders = as.list(capacityProviders), 
-        include = as.list(include)))
+    nextToken = NULL, simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), 
+    network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
+    capacityProviders <- as.list(capacityProviders)
+    include <- as.list(include)
+    parameters <- c(others, list(capacityProviders = capacityProviders, include = include, maxResults = maxResults, 
+        nextToken = nextToken))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "DescribeCapacityProviders", parameters = parameters, 
-        simplify = simplify, token_name = "nextToken")
+        simplify = simplify, token_name = "nextToken", print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
@@ -992,11 +1040,15 @@ ecs_describe_capacity_providers <- function(capacityProviders = NULL, include = 
 #' 
 #' @return A list object or a character vector
 #' @export
-ecs_describe_clusters <- function(clusters = NULL, include = NULL, simplify = TRUE, others = list()) {
-    parameters <- c(others, list(clusters = as.list(clusters), include = as.list(include)))
+ecs_describe_clusters <- function(clusters = NULL, include = NULL, simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), 
+    retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
+    clusters <- as.list(clusters)
+    include <- as.list(include)
+    parameters <- c(others, list(clusters = clusters, include = include))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "DescribeClusters", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
@@ -1007,7 +1059,7 @@ ecs_describe_clusters <- function(clusters = NULL, include = NULL, simplify = TR
 #' resources on each container instance
 #' requested.
 #' 
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the container instances...
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the container instances...
 #' @param containerInstances List. A list of up to 100 container instance IDs or full Amazon Resource Name (ARN) entries.
 #' @param include List. Specifies whether you want to see the resource tags for the container instance.
 #' @inheritParams CommonDoc
@@ -1031,12 +1083,15 @@ ecs_describe_clusters <- function(clusters = NULL, include = NULL, simplify = TR
 #' @return A list object or a character vector
 #' @export
 ecs_describe_container_instances <- function(cluster = NULL, containerInstances = NULL, include = NULL, 
-    simplify = TRUE, others = list()) {
-    parameters <- c(others, list(cluster = cluster, containerInstances = as.list(containerInstances), 
-        include = as.list(include)))
+    simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), 
+    network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
+    containerInstances <- as.list(containerInstances)
+    include <- as.list(include)
+    parameters <- c(others, list(cluster = cluster, containerInstances = containerInstances, include = include))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "DescribeContainerInstances", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
@@ -1045,7 +1100,7 @@ ecs_describe_container_instances <- function(cluster = NULL, containerInstances 
 #' Describes the specified services running
 #' in your cluster.
 #' 
-#' @param cluster String. The short name or full Amazon Resource Name (ARN)the cluster that hosts the service to describe.
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN)the cluster that hosts the service to describe.
 #' @param services List. A list of services to describe.
 #' @param include List. Specifies whether you want to see the resource tags for the service.
 #' @inheritParams CommonDoc
@@ -1068,18 +1123,22 @@ ecs_describe_container_instances <- function(cluster = NULL, containerInstances 
 #' included in the response.
 #' @return A list object or a character vector
 #' @export
-ecs_describe_services <- function(cluster = NULL, services = NULL, include = NULL, simplify = TRUE, 
-    others = list()) {
-    parameters <- c(others, list(cluster = cluster, services = as.list(services), include = as.list(include)))
+ecs_describe_services <- function(cluster = NULL, services = NULL, include = NULL, simplify = TRUE, others = list(), 
+    print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
+    services <- as.list(services)
+    include <- as.list(include)
+    parameters <- c(others, list(cluster = cluster, services = services, include = include))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "DescribeServices", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
 #' Describe Task Definition
 #' 
-#' @param taskDefinition String. The `family` for the latest `ACTIVE` revision, `family` and `revision` (`family:revision`) for a...
+#' @param taskDefinition Character. The `family` for the latest `ACTIVE` revision, `family` and `revision` (`family:revision`) for a...
 #' @param include List. Specifies whether to see the resource tags for the task definition.
 #' @inheritParams CommonDoc
 #' 
@@ -1095,12 +1154,15 @@ ecs_describe_services <- function(cluster = NULL, services = NULL, include = NUL
 #' omitted, tags are not included in the response.
 #' @return A list object or a character vector
 #' @export
-ecs_describe_task_definition <- function(taskDefinition = NULL, include = NULL, simplify = TRUE, 
-    others = list()) {
-    parameters <- c(others, list(taskDefinition = taskDefinition, include = as.list(include)))
+ecs_describe_task_definition <- function(taskDefinition = NULL, include = NULL, simplify = TRUE, others = list(), 
+    print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
+    include <- as.list(include)
+    parameters <- c(others, list(taskDefinition = taskDefinition, include = include))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "DescribeTaskDefinition", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
@@ -1113,8 +1175,8 @@ ecs_describe_task_definition <- function(taskDefinition = NULL, include = NULL, 
 #' in the *Amazon Elastic Container Service Developer
 #' Guide*.
 #' 
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the service that the...
-#' @param service String. The short name or full Amazon Resource Name (ARN) of the service that the task sets exist in.
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the service that the...
+#' @param service Character. The short name or full Amazon Resource Name (ARN) of the service that the task sets exist in.
 #' @param taskSets List. The ID or full Amazon Resource Name (ARN) of task sets to describe.
 #' @param include List. Specifies whether to see the resource tags for the task set.
 #' @inheritParams CommonDoc
@@ -1137,13 +1199,16 @@ ecs_describe_task_definition <- function(taskDefinition = NULL, include = NULL, 
 #' included in the response.
 #' @return A list object or a character vector
 #' @export
-ecs_describe_task_sets <- function(cluster = NULL, service = NULL, taskSets = NULL, include = NULL, 
-    simplify = TRUE, others = list()) {
-    parameters <- c(others, list(cluster = cluster, service = service, taskSets = as.list(taskSets), 
-        include = as.list(include)))
+ecs_describe_task_sets <- function(cluster = NULL, service = NULL, taskSets = NULL, include = NULL, simplify = TRUE, 
+    others = list(), print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
+    taskSets <- as.list(taskSets)
+    include <- as.list(include)
+    parameters <- c(others, list(cluster = cluster, service = service, taskSets = taskSets, include = include))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "DescribeTaskSets", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
@@ -1152,7 +1217,7 @@ ecs_describe_task_sets <- function(cluster = NULL, service = NULL, taskSets = NU
 #' Describes a specified task or
 #' tasks.
 #' 
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the task or tasks to...
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the task or tasks to...
 #' @param tasks List. A list of up to 100 task IDs or full ARN entries.
 #' @param include List. Specifies whether you want to see the resource tags for the task.
 #' @inheritParams CommonDoc
@@ -1174,19 +1239,23 @@ ecs_describe_task_sets <- function(cluster = NULL, service = NULL, taskSets = NU
 #' included in the response.
 #' @return A list object or a character vector
 #' @export
-ecs_describe_tasks <- function(cluster = NULL, tasks = NULL, include = NULL, simplify = TRUE, 
-    others = list()) {
-    parameters <- c(others, list(cluster = cluster, tasks = as.list(tasks), include = as.list(include)))
+ecs_describe_tasks <- function(cluster = NULL, tasks = NULL, include = NULL, simplify = TRUE, others = list(), 
+    print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
+    tasks <- as.list(tasks)
+    include <- as.list(include)
+    parameters <- c(others, list(cluster = cluster, tasks = tasks, include = include))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
-    make_request(service_request = ecs_request, action = "DescribeTasks", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+    make_request(service_request = ecs_request, action = "DescribeTasks", parameters = parameters, simplify = simplify, 
+        token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, network_timeout = network_timeout, 
+        region = region)
 }
 
 
 #' Discover Poll Endpoint
 #' 
-#' @param containerInstance String. The container instance ID or full ARN of the container instance.
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster to which the container instance...
+#' @param containerInstance Character. The container instance ID or full ARN of the container instance.
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster to which the container instance...
 #' @inheritParams CommonDoc
 #' 
 #' @section containerInstance:
@@ -1203,12 +1272,14 @@ ecs_describe_tasks <- function(cluster = NULL, tasks = NULL, include = NULL, sim
 #' the container instance belongs.
 #' @return A list object or a character vector
 #' @export
-ecs_discover_poll_endpoint <- function(containerInstance = NULL, cluster = NULL, simplify = TRUE, 
-    others = list()) {
+ecs_discover_poll_endpoint <- function(containerInstance = NULL, cluster = NULL, simplify = TRUE, others = list(), 
+    print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
     parameters <- c(others, list(containerInstance = containerInstance, cluster = cluster))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "DiscoverPollEndpoint", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
@@ -1217,10 +1288,10 @@ ecs_discover_poll_endpoint <- function(containerInstance = NULL, cluster = NULL,
 #' Lists the account settings for a specified
 #' principal.
 #' 
-#' @param maxResults String. Pagination limit\[optional\]
-#' @param name String. The name of the account setting you want to list the settings for.
-#' @param value String. The value of the account settings with which to filter results.
-#' @param principalArn String. The ARN of the principal, which can be an IAM user, IAM role, or the root user.
+#' @param maxResults Character. Pagination limit\[optional\]
+#' @param name Character. The name of the account setting you want to list the settings for.
+#' @param value Character. The value of the account settings with which to filter results.
+#' @param principalArn Character. The ARN of the principal, which can be an IAM user, IAM role, or the root user.
 #' @param effectiveSettings Logical. Specifies whether to return the effective settings.
 #' @inheritParams CommonDoc
 #' 
@@ -1250,12 +1321,14 @@ ecs_discover_poll_endpoint <- function(containerInstance = NULL, cluster = NULL,
 #' @return A list object or a character vector
 #' @export
 ecs_list_account_settings <- function(maxResults = NULL, nextToken = NULL, name = NULL, value = NULL, 
-    principalArn = NULL, effectiveSettings = NULL, simplify = TRUE, others = list()) {
-    parameters <- c(others, list(maxResults = maxResults, nextToken = nextToken, name = name, 
-        value = value, principalArn = principalArn, effectiveSettings = effectiveSettings))
+    principalArn = NULL, effectiveSettings = NULL, simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), 
+    retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
+    parameters <- c(others, list(maxResults = maxResults, nextToken = nextToken, name = name, value = value, 
+        principalArn = principalArn, effectiveSettings = effectiveSettings))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "ListAccountSettings", parameters = parameters, 
-        simplify = simplify, token_name = "nextToken")
+        simplify = simplify, token_name = "nextToken", print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
@@ -1270,11 +1343,11 @@ ecs_list_account_settings <- function(maxResults = NULL, nextToken = NULL, name 
 #' value, for example, to see which container instances in a cluster are
 #' running a Linux AMI (`ecs.os-type=linux`). 
 #' 
-#' @param maxResults String. Pagination limit\[optional\]
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster to list attributes.
-#' @param targetType String. The type of the target with which to list attributes.
-#' @param attributeName String. The name of the attribute with which to filter the results. 
-#' @param attributeValue String. The value of the attribute with which to filter results.
+#' @param maxResults Character. Pagination limit\[optional\]
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster to list attributes.
+#' @param targetType Character. The type of the target with which to list attributes.
+#' @param attributeName Character. The name of the attribute with which to filter the results. 
+#' @param attributeValue Character. The value of the attribute with which to filter results.
 #' @inheritParams CommonDoc
 #' 
 #' @section maxResults:
@@ -1298,12 +1371,14 @@ ecs_list_account_settings <- function(maxResults = NULL, nextToken = NULL, name 
 #' @return A list object or a character vector
 #' @export
 ecs_list_attributes <- function(maxResults = NULL, nextToken = NULL, cluster = NULL, targetType = NULL, 
-    attributeName = NULL, attributeValue = NULL, simplify = TRUE, others = list()) {
-    parameters <- c(others, list(maxResults = maxResults, nextToken = nextToken, cluster = cluster, 
-        targetType = targetType, attributeName = attributeName, attributeValue = attributeValue))
+    attributeName = NULL, attributeValue = NULL, simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), 
+    retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
+    parameters <- c(others, list(maxResults = maxResults, nextToken = nextToken, cluster = cluster, targetType = targetType, 
+        attributeName = attributeName, attributeValue = attributeValue))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
-    make_request(service_request = ecs_request, action = "ListAttributes", parameters = parameters, 
-        simplify = simplify, token_name = "nextToken")
+    make_request(service_request = ecs_request, action = "ListAttributes", parameters = parameters, simplify = simplify, 
+        token_name = "nextToken", print_on_error = print_on_error, retry_time = retry_time, network_timeout = network_timeout, 
+        region = region)
 }
 
 
@@ -1312,7 +1387,7 @@ ecs_list_attributes <- function(maxResults = NULL, nextToken = NULL, cluster = N
 #' Returns
 #' a list of existing clusters.
 #' 
-#' @param maxResults String. Pagination limit\[optional\]
+#' @param maxResults Character. Pagination limit\[optional\]
 #' @inheritParams CommonDoc
 #' 
 #' @section maxResults:
@@ -1320,11 +1395,13 @@ ecs_list_attributes <- function(maxResults = NULL, nextToken = NULL, cluster = N
 #' limit
 #' @return A list object or a character vector
 #' @export
-ecs_list_clusters <- function(maxResults = NULL, nextToken = NULL, simplify = TRUE, others = list()) {
+ecs_list_clusters <- function(maxResults = NULL, nextToken = NULL, simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), 
+    retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
     parameters <- c(others, list(maxResults = maxResults, nextToken = nextToken))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
-    make_request(service_request = ecs_request, action = "ListClusters", parameters = parameters, 
-        simplify = simplify, token_name = "nextToken")
+    make_request(service_request = ecs_request, action = "ListClusters", parameters = parameters, simplify = simplify, 
+        token_name = "nextToken", print_on_error = print_on_error, retry_time = retry_time, network_timeout = network_timeout, 
+        region = region)
 }
 
 
@@ -1339,10 +1416,10 @@ ecs_list_clusters <- function(maxResults = NULL, nextToken = NULL, simplify = TR
 #' in the *Amazon Elastic Container Service Developer
 #' Guide*.
 #' 
-#' @param maxResults String. Pagination limit\[optional\]
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the container instances...
-#' @param filter String. You can filter the results of a `ListContainerInstances` operation with cluster query language statements....
-#' @param status String. Filters the container instances by status.
+#' @param maxResults Character. Pagination limit\[optional\]
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the container instances...
+#' @param filter Character. You can filter the results of a `ListContainerInstances` operation with cluster query language statements....
+#' @param status Character. Filters the container instances by status.
 #' @inheritParams CommonDoc
 #' 
 #' @section maxResults:
@@ -1369,13 +1446,15 @@ ecs_list_clusters <- function(maxResults = NULL, nextToken = NULL, simplify = TR
 #' `INACTIVE`.
 #' @return A list object or a character vector
 #' @export
-ecs_list_container_instances <- function(maxResults = NULL, nextToken = NULL, cluster = NULL, 
-    filter = NULL, status = NULL, simplify = TRUE, others = list()) {
-    parameters <- c(others, list(maxResults = maxResults, nextToken = nextToken, cluster = cluster, 
-        filter = filter, status = status))
+ecs_list_container_instances <- function(maxResults = NULL, nextToken = NULL, cluster = NULL, filter = NULL, 
+    status = NULL, simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), 
+    network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
+    parameters <- c(others, list(maxResults = maxResults, nextToken = nextToken, cluster = cluster, filter = filter, 
+        status = status))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "ListContainerInstances", parameters = parameters, 
-        simplify = simplify, token_name = "nextToken")
+        simplify = simplify, token_name = "nextToken", print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
@@ -1384,10 +1463,10 @@ ecs_list_container_instances <- function(maxResults = NULL, nextToken = NULL, cl
 #' Lists the services that are running in a
 #' specified cluster.
 #' 
-#' @param maxResults String. Pagination limit\[optional\]
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the services to list.
-#' @param launchType String. The launch type for the services to list.
-#' @param schedulingStrategy String. The scheduling strategy for services to list.
+#' @param maxResults Character. Pagination limit\[optional\]
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the services to list.
+#' @param launchType Character. The launch type for the services to list.
+#' @param schedulingStrategy Character. The scheduling strategy for services to list.
 #' @inheritParams CommonDoc
 #' 
 #' @section maxResults:
@@ -1407,12 +1486,14 @@ ecs_list_container_instances <- function(maxResults = NULL, nextToken = NULL, cl
 #' @return A list object or a character vector
 #' @export
 ecs_list_services <- function(maxResults = NULL, nextToken = NULL, cluster = NULL, launchType = NULL, 
-    schedulingStrategy = NULL, simplify = TRUE, others = list()) {
-    parameters <- c(others, list(maxResults = maxResults, nextToken = nextToken, cluster = cluster, 
-        launchType = launchType, schedulingStrategy = schedulingStrategy))
+    schedulingStrategy = NULL, simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), 
+    retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
+    parameters <- c(others, list(maxResults = maxResults, nextToken = nextToken, cluster = cluster, launchType = launchType, 
+        schedulingStrategy = schedulingStrategy))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
-    make_request(service_request = ecs_request, action = "ListServices", parameters = parameters, 
-        simplify = simplify, token_name = "nextToken")
+    make_request(service_request = ecs_request, action = "ListServices", parameters = parameters, simplify = simplify, 
+        token_name = "nextToken", print_on_error = print_on_error, retry_time = retry_time, network_timeout = network_timeout, 
+        region = region)
 }
 
 
@@ -1421,7 +1502,7 @@ ecs_list_services <- function(maxResults = NULL, nextToken = NULL, cluster = NUL
 #' List the tags for an Amazon ECS
 #' resource.
 #' 
-#' @param resourceArn String. The Amazon Resource Name (ARN) that identifies the resource for which to list the tags.
+#' @param resourceArn Character. The Amazon Resource Name (ARN) that identifies the resource for which to list the tags.
 #' @inheritParams CommonDoc
 #' 
 #' @section resourceArn:
@@ -1431,19 +1512,21 @@ ecs_list_services <- function(maxResults = NULL, nextToken = NULL, cluster = NUL
 #' and container instances.
 #' @return A list object or a character vector
 #' @export
-ecs_list_tags_for_resource <- function(resourceArn = NULL, simplify = TRUE, others = list()) {
+ecs_list_tags_for_resource <- function(resourceArn = NULL, simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), 
+    retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
     parameters <- c(others, list(resourceArn = resourceArn))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "ListTagsForResource", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
 #' List Task Definition Families
 #' 
-#' @param maxResults String. Pagination limit\[optional\]
-#' @param familyPrefix String. The `familyPrefix` is a string that is used to filter the results of `ListTaskDefinitionFamilies`.
-#' @param status String. The task definition family status with which to filter the `ListTaskDefinitionFamilies` results.
+#' @param maxResults Character. Pagination limit\[optional\]
+#' @param familyPrefix Character. The `familyPrefix` is a string that is used to filter the results of `ListTaskDefinitionFamilies`.
+#' @param status Character. The task definition family status with which to filter the `ListTaskDefinitionFamilies` results.
 #' @inheritParams CommonDoc
 #' 
 #' @section maxResults:
@@ -1468,12 +1551,14 @@ ecs_list_tags_for_resource <- function(resourceArn = NULL, simplify = TRUE, othe
 #' @return A list object or a character vector
 #' @export
 ecs_list_task_definition_families <- function(maxResults = NULL, nextToken = NULL, familyPrefix = NULL, 
-    status = NULL, simplify = TRUE, others = list()) {
+    status = NULL, simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), 
+    network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
     parameters <- c(others, list(maxResults = maxResults, nextToken = nextToken, familyPrefix = familyPrefix, 
         status = status))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "ListTaskDefinitionFamilies", parameters = parameters, 
-        simplify = simplify, token_name = "nextToken")
+        simplify = simplify, token_name = "nextToken", print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
@@ -1484,10 +1569,10 @@ ecs_list_task_definition_families <- function(maxResults = NULL, nextToken = NUL
 #' with the `familyPrefix` parameter or by status with the `status`
 #' parameter.
 #' 
-#' @param maxResults String. Pagination limit\[optional\]
-#' @param familyPrefix String. The full family name with which to filter the `ListTaskDefinitions` results.
-#' @param status String. The task definition status with which to filter the `ListTaskDefinitions` results.
-#' @param sort String. The order in which to sort the results.
+#' @param maxResults Character. Pagination limit\[optional\]
+#' @param familyPrefix Character. The full family name with which to filter the `ListTaskDefinitions` results.
+#' @param status Character. The task definition status with which to filter the `ListTaskDefinitions` results.
+#' @param sort Character. The order in which to sort the results.
 #' @inheritParams CommonDoc
 #' 
 #' @section maxResults:
@@ -1517,26 +1602,28 @@ ecs_list_task_definition_families <- function(maxResults = NULL, nextToken = NUL
 #' first.
 #' @return A list object or a character vector
 #' @export
-ecs_list_task_definitions <- function(maxResults = NULL, nextToken = NULL, familyPrefix = NULL, 
-    status = NULL, sort = NULL, simplify = TRUE, others = list()) {
+ecs_list_task_definitions <- function(maxResults = NULL, nextToken = NULL, familyPrefix = NULL, status = NULL, 
+    sort = NULL, simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), 
+    network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
     parameters <- c(others, list(maxResults = maxResults, nextToken = nextToken, familyPrefix = familyPrefix, 
         status = status, sort = sort))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "ListTaskDefinitions", parameters = parameters, 
-        simplify = simplify, token_name = "nextToken")
+        simplify = simplify, token_name = "nextToken", print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
 #' List Tasks
 #' 
-#' @param maxResults String. Pagination limit\[optional\]
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the tasks to list.
-#' @param containerInstance String. The container instance ID or full ARN of the container instance with which to filter the `ListTasks`...
-#' @param family String. The name of the family with which to filter the `ListTasks` results.
-#' @param startedBy String. The `startedBy` value with which to filter the task results.
-#' @param serviceName String. The name of the service with which to filter the `ListTasks` results.
-#' @param desiredStatus String.   The task desired status with which to filter the `ListTasks` results.
-#' @param launchType String. The launch type for services to list.
+#' @param maxResults Character. Pagination limit\[optional\]
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the tasks to list.
+#' @param containerInstance Character. The container instance ID or full ARN of the container instance with which to filter the `ListTasks`...
+#' @param family Character. The name of the family with which to filter the `ListTasks` results.
+#' @param startedBy Character. The `startedBy` value with which to filter the task results.
+#' @param serviceName Character. The name of the service with which to filter the `ListTasks` results.
+#' @param desiredStatus Character.   The task desired status with which to filter the `ListTasks` results.
+#' @param launchType Character. The launch type for services to list.
 #' @inheritParams CommonDoc
 #' 
 #' @section maxResults:
@@ -1586,22 +1673,24 @@ ecs_list_task_definitions <- function(maxResults = NULL, nextToken = NULL, famil
 #' @return A list object or a character vector
 #' @export
 ecs_list_tasks <- function(maxResults = NULL, nextToken = NULL, cluster = NULL, containerInstance = NULL, 
-    family = NULL, startedBy = NULL, serviceName = NULL, desiredStatus = NULL, launchType = NULL, 
-    simplify = TRUE, others = list()) {
-    parameters <- c(others, list(maxResults = maxResults, nextToken = nextToken, cluster = cluster, 
-        containerInstance = containerInstance, family = family, startedBy = startedBy, serviceName = serviceName, 
-        desiredStatus = desiredStatus, launchType = launchType))
+    family = NULL, startedBy = NULL, serviceName = NULL, desiredStatus = NULL, launchType = NULL, simplify = TRUE, 
+    others = list(), print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
+    parameters <- c(others, list(maxResults = maxResults, nextToken = nextToken, cluster = cluster, containerInstance = containerInstance, 
+        family = family, startedBy = startedBy, serviceName = serviceName, desiredStatus = desiredStatus, 
+        launchType = launchType))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
-    make_request(service_request = ecs_request, action = "ListTasks", parameters = parameters, 
-        simplify = simplify, token_name = "nextToken")
+    make_request(service_request = ecs_request, action = "ListTasks", parameters = parameters, simplify = simplify, 
+        token_name = "nextToken", print_on_error = print_on_error, retry_time = retry_time, network_timeout = network_timeout, 
+        region = region)
 }
 
 
 #' Put Account Setting
 #' 
-#' @param name String. The Amazon ECS resource name for which to modify the account setting.
-#' @param value String. The account setting value for the specified principal ARN.
-#' @param principalArn String. The ARN of the principal, which can be an IAM user, IAM role, or the root user.
+#' @param name Character. The Amazon ECS resource name for which to modify the account setting.
+#' @param value Character. The account setting value for the specified principal ARN.
+#' @param principalArn Character. The ARN of the principal, which can be an IAM user, IAM role, or the root user.
 #' @inheritParams CommonDoc
 #' 
 #' @section name:
@@ -1629,12 +1718,14 @@ ecs_list_tasks <- function(maxResults = NULL, nextToken = NULL, cluster = NULL, 
 #' for the authenticated user.
 #' @return A list object or a character vector
 #' @export
-ecs_put_account_setting <- function(name = NULL, value = NULL, principalArn = NULL, simplify = TRUE, 
-    others = list()) {
+ecs_put_account_setting <- function(name = NULL, value = NULL, principalArn = NULL, simplify = TRUE, others = list(), 
+    print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
     parameters <- c(others, list(name = name, value = value, principalArn = principalArn))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "PutAccountSetting", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
@@ -1645,8 +1736,8 @@ ecs_put_account_setting <- function(name = NULL, value = NULL, principalArn = NU
 #' Account settings are set on a per-Region
 #' basis.
 #' 
-#' @param name String. The resource name for which to modify the account setting.
-#' @param value String. The account setting value for the specified principal ARN.
+#' @param name Character. The resource name for which to modify the account setting.
+#' @param value Character. The account setting value for the specified principal ARN.
 #' @inheritParams CommonDoc
 #' 
 #' @section name:
@@ -1667,11 +1758,14 @@ ecs_put_account_setting <- function(name = NULL, value = NULL, principalArn = NU
 #' `disabled`.
 #' @return A list object or a character vector
 #' @export
-ecs_put_account_setting_default <- function(name = NULL, value = NULL, simplify = TRUE, others = list()) {
+ecs_put_account_setting_default <- function(name = NULL, value = NULL, simplify = TRUE, others = list(), 
+    print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
     parameters <- c(others, list(name = name, value = value))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "PutAccountSettingDefault", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
@@ -1685,7 +1779,7 @@ ecs_put_account_setting_default <- function(name = NULL, value = NULL, simplify 
 #' in the *Amazon Elastic Container Service Developer
 #' Guide*.
 #' 
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster that contains the resource to apply...
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster that contains the resource to apply...
 #' @param attributes List. The attributes to apply to your resource.
 #' @inheritParams CommonDoc
 #' 
@@ -1700,17 +1794,20 @@ ecs_put_account_setting_default <- function(name = NULL, value = NULL, simplify 
 #' up to 10 attributes in a single call.
 #' @return A list object or a character vector
 #' @export
-ecs_put_attributes <- function(cluster = NULL, attributes = NULL, simplify = TRUE, others = list()) {
-    parameters <- c(others, list(cluster = cluster, attributes = as.list(attributes)))
+ecs_put_attributes <- function(cluster = NULL, attributes = NULL, simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), 
+    retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
+    attributes <- as.list(attributes)
+    parameters <- c(others, list(cluster = cluster, attributes = attributes))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
-    make_request(service_request = ecs_request, action = "PutAttributes", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+    make_request(service_request = ecs_request, action = "PutAttributes", parameters = parameters, simplify = simplify, 
+        token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, network_timeout = network_timeout, 
+        region = region)
 }
 
 
 #' Put Cluster Capacity Providers
 #' 
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster to modify the capacity provider...
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster to modify the capacity provider...
 #' @param capacityProviders List.   The name of one or more capacity providers to associate with the cluster.
 #' @param defaultCapacityProviderStrategy List.   The capacity provider strategy to use by default for the cluster.
 #' @inheritParams CommonDoc
@@ -1761,23 +1858,26 @@ ecs_put_attributes <- function(cluster = NULL, attributes = NULL, simplify = TRU
 #' @return A list object or a character vector
 #' @export
 ecs_put_cluster_capacity_providers <- function(cluster = NULL, capacityProviders = NULL, defaultCapacityProviderStrategy = NULL, 
-    simplify = TRUE, others = list()) {
-    parameters <- c(others, list(cluster = cluster, capacityProviders = as.list(capacityProviders), 
-        defaultCapacityProviderStrategy = as.list(defaultCapacityProviderStrategy)))
+    simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), 
+    network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
+    capacityProviders <- as.list(capacityProviders)
+    defaultCapacityProviderStrategy <- as.list(defaultCapacityProviderStrategy)
+    parameters <- c(others, list(cluster = cluster, capacityProviders = capacityProviders, defaultCapacityProviderStrategy = defaultCapacityProviderStrategy))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "PutClusterCapacityProviders", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
 #' Register Container Instance
 #' 
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster with which to register your container...
-#' @param instanceIdentityDocument String. The instance identity document for the EC2 instance to register.
-#' @param instanceIdentityDocumentSignature String. The instance identity document signature for the EC2 instance to register.
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster with which to register your container...
+#' @param instanceIdentityDocument Character. The instance identity document for the EC2 instance to register.
+#' @param instanceIdentityDocumentSignature Character. The instance identity document signature for the EC2 instance to register.
 #' @param totalResources List. The resources available on the instance.
 #' @param versionInfo Object. The version information for the Amazon ECS container agent and Docker daemon running on the container...
-#' @param containerInstanceArn String. The ARN of the container instance (if it was previously registered).
+#' @param containerInstanceArn Character. The ARN of the container instance (if it was previously registered).
 #' @param attributes List. The container instance attributes that this container instance supports.
 #' @param platformDevices List. The devices that are available on the container instance. The only supported device type is a GPU.
 #' @param tags List.   The metadata that you apply to the container instance to help you categorize and organize them.
@@ -1852,33 +1952,40 @@ ecs_put_cluster_capacity_providers <- function(cluster = NULL, capacityProviders
 #' @return A list object or a character vector
 #' @export
 ecs_register_container_instance <- function(cluster = NULL, instanceIdentityDocument = NULL, instanceIdentityDocumentSignature = NULL, 
-    totalResources = NULL, versionInfo = NULL, containerInstanceArn = NULL, attributes = NULL, 
-    platformDevices = NULL, tags = NULL, simplify = TRUE, others = list()) {
+    totalResources = NULL, versionInfo = NULL, containerInstanceArn = NULL, attributes = NULL, platformDevices = NULL, 
+    tags = NULL, simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), 
+    network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
+    totalResources <- as.list(totalResources)
+    attributes <- as.list(attributes)
+    platformDevices <- as.list(platformDevices)
+    tags <- as.list(tags)
+    versionInfo <- as.list(versionInfo)
     parameters <- c(others, list(cluster = cluster, instanceIdentityDocument = instanceIdentityDocument, 
-        instanceIdentityDocumentSignature = instanceIdentityDocumentSignature, versionInfo = versionInfo, 
-        containerInstanceArn = containerInstanceArn, totalResources = as.list(totalResources), 
-        attributes = as.list(attributes), platformDevices = as.list(platformDevices), tags = as.list(tags)))
+        instanceIdentityDocumentSignature = instanceIdentityDocumentSignature, totalResources = totalResources, 
+        versionInfo = versionInfo, containerInstanceArn = containerInstanceArn, attributes = attributes, 
+        platformDevices = platformDevices, tags = tags))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "RegisterContainerInstance", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
 #' Register Task Definition
 #' 
-#' @param family String. You must specify a `family` for a task definition, which allows you to track multiple versions of...
-#' @param taskRoleArn String. The short name or full Amazon Resource Name (ARN) of the IAM role that containers in this task can...
-#' @param executionRoleArn String. The Amazon Resource Name (ARN) of the task execution role that grants the Amazon ECS container agent...
-#' @param networkMode String.   The Docker networking mode to use for the containers in the task.
+#' @param family Character. You must specify a `family` for a task definition, which allows you to track multiple versions of...
+#' @param taskRoleArn Character. The short name or full Amazon Resource Name (ARN) of the IAM role that containers in this task can...
+#' @param executionRoleArn Character. The Amazon Resource Name (ARN) of the task execution role that grants the Amazon ECS container agent...
+#' @param networkMode Character.   The Docker networking mode to use for the containers in the task.
 #' @param containerDefinitions List. A list of container definitions in JSON format that describe the different containers that make up...
 #' @param volumes List. A list of volume definitions in JSON format that containers in your task may use.
 #' @param placementConstraints List. An array of placement constraint objects to use for the task.
 #' @param requiresCompatibilities List. The task launch type that Amazon ECS should validate the task definition against.
-#' @param cpu String.   The number of CPU units used by the task.
-#' @param memory String.   The amount of memory (in MiB) used by the task.
+#' @param cpu Character.   The number of CPU units used by the task.
+#' @param memory Character.   The amount of memory (in MiB) used by the task.
 #' @param tags List.   The metadata that you apply to the task definition to help you categorize and organize them.
-#' @param pidMode String.   The process namespace to use for the containers in the task.
-#' @param ipcMode String.   The IPC resource namespace to use for the containers in the task.
+#' @param pidMode Character.   The process namespace to use for the containers in the task.
+#' @param ipcMode Character.   The IPC resource namespace to use for the containers in the task.
 #' @param proxyConfiguration No description can be found.
 #' @param inferenceAccelerators List. The Elastic Inference accelerators to use for the containers in the task.
 #' @inheritParams CommonDoc
@@ -2135,39 +2242,46 @@ ecs_register_container_instance <- function(cluster = NULL, instanceIdentityDocu
 #' accelerators to use for the containers in the task.
 #' @return A list object or a character vector
 #' @export
-ecs_register_task_definition <- function(family = NULL, taskRoleArn = NULL, executionRoleArn = NULL, 
-    networkMode = NULL, containerDefinitions = NULL, volumes = NULL, placementConstraints = NULL, 
-    requiresCompatibilities = NULL, cpu = NULL, memory = NULL, tags = NULL, pidMode = NULL, ipcMode = NULL, 
-    proxyConfiguration = NULL, inferenceAccelerators = NULL, simplify = TRUE, others = list()) {
+ecs_register_task_definition <- function(family = NULL, taskRoleArn = NULL, executionRoleArn = NULL, networkMode = NULL, 
+    containerDefinitions = NULL, volumes = NULL, placementConstraints = NULL, requiresCompatibilities = NULL, 
+    cpu = NULL, memory = NULL, tags = NULL, pidMode = NULL, ipcMode = NULL, proxyConfiguration = NULL, 
+    inferenceAccelerators = NULL, simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), 
+    retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
+    containerDefinitions <- as.list(containerDefinitions)
+    volumes <- as.list(volumes)
+    placementConstraints <- as.list(placementConstraints)
+    requiresCompatibilities <- as.list(requiresCompatibilities)
+    tags <- as.list(tags)
+    inferenceAccelerators <- as.list(inferenceAccelerators)
     parameters <- c(others, list(family = family, taskRoleArn = taskRoleArn, executionRoleArn = executionRoleArn, 
-        networkMode = networkMode, cpu = cpu, memory = memory, pidMode = pidMode, ipcMode = ipcMode, 
-        proxyConfiguration = proxyConfiguration, containerDefinitions = as.list(containerDefinitions), 
-        volumes = as.list(volumes), placementConstraints = as.list(placementConstraints), requiresCompatibilities = as.list(requiresCompatibilities), 
-        tags = as.list(tags), inferenceAccelerators = as.list(inferenceAccelerators)))
+        networkMode = networkMode, containerDefinitions = containerDefinitions, volumes = volumes, placementConstraints = placementConstraints, 
+        requiresCompatibilities = requiresCompatibilities, cpu = cpu, memory = memory, tags = tags, pidMode = pidMode, 
+        ipcMode = ipcMode, proxyConfiguration = proxyConfiguration, inferenceAccelerators = inferenceAccelerators))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "RegisterTaskDefinition", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
 #' Run Task
 #' 
 #' @param capacityProviderStrategy List.   The capacity provider strategy to use for the task.
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster on which to run your task.
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster on which to run your task.
 #' @param count Integer. The number of instantiations of the specified task to place on your cluster.
 #' @param enableECSManagedTags Logical. Specifies whether to enable Amazon ECS managed tags for the task.
-#' @param group String. The name of the task group to associate with the task.
-#' @param launchType String.   The launch type on which to run your task.
+#' @param group Character. The name of the task group to associate with the task.
+#' @param launchType Character.   The launch type on which to run your task.
 #' @param networkConfiguration Object. The network configuration for the task.
 #' @param overrides Object.   A list of container overrides in JSON format that specify the name of a container in the specified...
 #' @param placementConstraints List. An array of placement constraint objects to use for the task.
 #' @param placementStrategy List. The placement strategy objects to use for the task.
-#' @param platformVersion String. The platform version the task should run.
-#' @param propagateTags String.   Specifies whether to propagate the tags from the task definition to the task.
-#' @param referenceId String. The reference ID to use for the task.
-#' @param startedBy String.   An optional tag specified when a task is started.
+#' @param platformVersion Character. The platform version the task should run.
+#' @param propagateTags Character.   Specifies whether to propagate the tags from the task definition to the task.
+#' @param referenceId Character. The reference ID to use for the task.
+#' @param startedBy Character.   An optional tag specified when a task is started.
 #' @param tags List.   The metadata that you apply to the task to help you categorize and organize them.
-#' @param taskDefinition String. The `family` and `revision` (`family:revision`) or full ARN of the task definition to run.
+#' @param taskDefinition Character. The `family` and `revision` (`family:revision`) or full ARN of the task definition to run.
 #' @inheritParams CommonDoc
 #' 
 #' @section capacityProviderStrategy:
@@ -2331,33 +2445,40 @@ ecs_register_task_definition <- function(family = NULL, taskRoleArn = NULL, exec
 #' @export
 ecs_run_task <- function(capacityProviderStrategy = NULL, cluster = NULL, count = NULL, enableECSManagedTags = NULL, 
     group = NULL, launchType = NULL, networkConfiguration = NULL, overrides = NULL, placementConstraints = NULL, 
-    placementStrategy = NULL, platformVersion = NULL, propagateTags = NULL, referenceId = NULL, 
-    startedBy = NULL, tags = NULL, taskDefinition = NULL, simplify = TRUE, others = list()) {
-    parameters <- c(others, list(cluster = cluster, count = count, enableECSManagedTags = enableECSManagedTags, 
-        group = group, launchType = launchType, networkConfiguration = networkConfiguration, overrides = overrides, 
-        platformVersion = platformVersion, propagateTags = propagateTags, referenceId = referenceId, 
-        startedBy = startedBy, taskDefinition = taskDefinition, capacityProviderStrategy = as.list(capacityProviderStrategy), 
-        placementConstraints = as.list(placementConstraints), placementStrategy = as.list(placementStrategy), 
-        tags = as.list(tags)))
+    placementStrategy = NULL, platformVersion = NULL, propagateTags = NULL, referenceId = NULL, startedBy = NULL, 
+    tags = NULL, taskDefinition = NULL, simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), 
+    retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
+    capacityProviderStrategy <- as.list(capacityProviderStrategy)
+    placementConstraints <- as.list(placementConstraints)
+    placementStrategy <- as.list(placementStrategy)
+    tags <- as.list(tags)
+    networkConfiguration <- as.list(networkConfiguration)
+    overrides <- as.list(overrides)
+    parameters <- c(others, list(capacityProviderStrategy = capacityProviderStrategy, cluster = cluster, 
+        count = count, enableECSManagedTags = enableECSManagedTags, group = group, launchType = launchType, 
+        networkConfiguration = networkConfiguration, overrides = overrides, placementConstraints = placementConstraints, 
+        placementStrategy = placementStrategy, platformVersion = platformVersion, propagateTags = propagateTags, 
+        referenceId = referenceId, startedBy = startedBy, tags = tags, taskDefinition = taskDefinition))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "RunTask", parameters = parameters, simplify = simplify, 
-        token_name = NULL)
+        token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, network_timeout = network_timeout, 
+        region = region)
 }
 
 
 #' Start Task
 #' 
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster on which to start your task.
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster on which to start your task.
 #' @param containerInstances List. The container instance IDs or full ARN entries for the container instances on which you would like...
 #' @param enableECSManagedTags Logical. Specifies whether to enable Amazon ECS managed tags for the task.
-#' @param group String. The name of the task group to associate with the task.
+#' @param group Character. The name of the task group to associate with the task.
 #' @param networkConfiguration Object. The VPC subnet and security group configuration for tasks that receive their own elastic network...
 #' @param overrides Object.   A list of container overrides in JSON format that specify the name of a container in the specified...
-#' @param propagateTags String. Specifies whether to propagate the tags from the task definition or the service to the task.
-#' @param referenceId String. The reference ID to use for the task.
-#' @param startedBy String.   An optional tag specified when a task is started.
+#' @param propagateTags Character. Specifies whether to propagate the tags from the task definition or the service to the task.
+#' @param referenceId Character. The reference ID to use for the task.
+#' @param startedBy Character.   An optional tag specified when a task is started.
 #' @param tags List.   The metadata that you apply to the task to help you categorize and organize them.
-#' @param taskDefinition String. The `family` and `revision` (`family:revision`) or full ARN of the task definition to start.
+#' @param taskDefinition Character. The `family` and `revision` (`family:revision`) or full ARN of the task definition to start.
 #' @inheritParams CommonDoc
 #' 
 #' @section cluster:
@@ -2456,24 +2577,29 @@ ecs_run_task <- function(capacityProviderStrategy = NULL, cluster = NULL, count 
 #' specified, the latest `ACTIVE` revision is used.
 #' @return A list object or a character vector
 #' @export
-ecs_start_task <- function(cluster = NULL, containerInstances = NULL, enableECSManagedTags = NULL, 
-    group = NULL, networkConfiguration = NULL, overrides = NULL, propagateTags = NULL, referenceId = NULL, 
-    startedBy = NULL, tags = NULL, taskDefinition = NULL, simplify = TRUE, others = list()) {
-    parameters <- c(others, list(cluster = cluster, enableECSManagedTags = enableECSManagedTags, 
+ecs_start_task <- function(cluster = NULL, containerInstances = NULL, enableECSManagedTags = NULL, group = NULL, 
+    networkConfiguration = NULL, overrides = NULL, propagateTags = NULL, referenceId = NULL, startedBy = NULL, 
+    tags = NULL, taskDefinition = NULL, simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), 
+    retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
+    containerInstances <- as.list(containerInstances)
+    tags <- as.list(tags)
+    networkConfiguration <- as.list(networkConfiguration)
+    overrides <- as.list(overrides)
+    parameters <- c(others, list(cluster = cluster, containerInstances = containerInstances, enableECSManagedTags = enableECSManagedTags, 
         group = group, networkConfiguration = networkConfiguration, overrides = overrides, propagateTags = propagateTags, 
-        referenceId = referenceId, startedBy = startedBy, taskDefinition = taskDefinition, containerInstances = as.list(containerInstances), 
-        tags = as.list(tags)))
+        referenceId = referenceId, startedBy = startedBy, tags = tags, taskDefinition = taskDefinition))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
-    make_request(service_request = ecs_request, action = "StartTask", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+    make_request(service_request = ecs_request, action = "StartTask", parameters = parameters, simplify = simplify, 
+        token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, network_timeout = network_timeout, 
+        region = region)
 }
 
 
 #' Stop Task
 #' 
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the task to stop.
-#' @param task String. The task ID or full Amazon Resource Name (ARN) of the task to stop.
-#' @param reason String. An optional message specified when a task is stopped.
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the task to stop.
+#' @param task Character. The task ID or full Amazon Resource Name (ARN) of the task to stop.
+#' @param reason Character. An optional message specified when a task is stopped.
 #' @inheritParams CommonDoc
 #' 
 #' @section cluster:
@@ -2493,17 +2619,20 @@ ecs_start_task <- function(cluster = NULL, containerInstances = NULL, enableECSM
 #' message.
 #' @return A list object or a character vector
 #' @export
-ecs_stop_task <- function(cluster = NULL, task = NULL, reason = NULL, simplify = TRUE, others = list()) {
+ecs_stop_task <- function(cluster = NULL, task = NULL, reason = NULL, simplify = TRUE, others = list(), 
+    print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
     parameters <- c(others, list(cluster = cluster, task = task, reason = reason))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
-    make_request(service_request = ecs_request, action = "StopTask", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+    make_request(service_request = ecs_request, action = "StopTask", parameters = parameters, simplify = simplify, 
+        token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, network_timeout = network_timeout, 
+        region = region)
 }
 
 
 #' Submit Attachment State Changes
 #' 
-#' @param cluster String. The short name or full ARN of the cluster that hosts the container instance the attachment belongs...
+#' @param cluster Character. The short name or full ARN of the cluster that hosts the container instance the attachment belongs...
 #' @param attachments List. Any attachments associated with the state change request.
 #' @inheritParams CommonDoc
 #' 
@@ -2516,24 +2645,27 @@ ecs_stop_task <- function(cluster = NULL, task = NULL, reason = NULL, simplify =
 #' request.
 #' @return A list object or a character vector
 #' @export
-ecs_submit_attachment_state_changes <- function(cluster = NULL, attachments = NULL, simplify = TRUE, 
-    others = list()) {
-    parameters <- c(others, list(cluster = cluster, attachments = as.list(attachments)))
+ecs_submit_attachment_state_changes <- function(cluster = NULL, attachments = NULL, simplify = TRUE, others = list(), 
+    print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
+    attachments <- as.list(attachments)
+    parameters <- c(others, list(cluster = cluster, attachments = attachments))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "SubmitAttachmentStateChanges", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
 #' Submit Container State Change
 #' 
-#' @param cluster String. The short name or full ARN of the cluster that hosts the container.
-#' @param task String. The task ID or full Amazon Resource Name (ARN) of the task that hosts the container.
-#' @param containerName String. The name of the container.
-#' @param runtimeId String. The ID of the Docker container.
-#' @param status String. The status of the state change request.
+#' @param cluster Character. The short name or full ARN of the cluster that hosts the container.
+#' @param task Character. The task ID or full Amazon Resource Name (ARN) of the task that hosts the container.
+#' @param containerName Character. The name of the container.
+#' @param runtimeId Character. The ID of the Docker container.
+#' @param status Character. The status of the state change request.
 #' @param exitCode Integer. The exit code returned for the state change request.
-#' @param reason String. The reason for the state change request.
+#' @param reason Character. The reason for the state change request.
 #' @param networkBindings List. The network bindings of the container.
 #' @inheritParams CommonDoc
 #' 
@@ -2564,28 +2696,31 @@ ecs_submit_attachment_state_changes <- function(cluster = NULL, attachments = NU
 #' container.
 #' @return A list object or a character vector
 #' @export
-ecs_submit_container_state_change <- function(cluster = NULL, task = NULL, containerName = NULL, 
-    runtimeId = NULL, status = NULL, exitCode = NULL, reason = NULL, networkBindings = NULL, simplify = TRUE, 
-    others = list()) {
-    parameters <- c(others, list(cluster = cluster, task = task, containerName = containerName, 
-        runtimeId = runtimeId, status = status, exitCode = exitCode, reason = reason, networkBindings = as.list(networkBindings)))
+ecs_submit_container_state_change <- function(cluster = NULL, task = NULL, containerName = NULL, runtimeId = NULL, 
+    status = NULL, exitCode = NULL, reason = NULL, networkBindings = NULL, simplify = TRUE, others = list(), 
+    print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
+    networkBindings <- as.list(networkBindings)
+    parameters <- c(others, list(cluster = cluster, task = task, containerName = containerName, runtimeId = runtimeId, 
+        status = status, exitCode = exitCode, reason = reason, networkBindings = networkBindings))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "SubmitContainerStateChange", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
 #' Submit Task State Change
 #' 
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the task.
-#' @param task String. The task ID or full ARN of the task in the state change request.
-#' @param status String. The status of the state change request.
-#' @param reason String. The reason for the state change request.
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the task.
+#' @param task Character. The task ID or full ARN of the task in the state change request.
+#' @param status Character. The status of the state change request.
+#' @param reason Character. The reason for the state change request.
 #' @param containers List. Any containers associated with the state change request.
 #' @param attachments List. Any attachments associated with the state change request.
-#' @param pullStartedAt String. The Unix timestamp for when the container image pull began.
-#' @param pullStoppedAt String. The Unix timestamp for when the container image pull completed.
-#' @param executionStoppedAt String. The Unix timestamp for when the task execution stopped.
+#' @param pullStartedAt Character. The Unix timestamp for when the container image pull began.
+#' @param pullStoppedAt Character. The Unix timestamp for when the container image pull completed.
+#' @param executionStoppedAt Character. The Unix timestamp for when the task execution stopped.
 #' @inheritParams CommonDoc
 #' 
 #' @section cluster:
@@ -2619,15 +2754,18 @@ ecs_submit_container_state_change <- function(cluster = NULL, task = NULL, conta
 #' stopped.
 #' @return A list object or a character vector
 #' @export
-ecs_submit_task_state_change <- function(cluster = NULL, task = NULL, status = NULL, reason = NULL, 
-    containers = NULL, attachments = NULL, pullStartedAt = NULL, pullStoppedAt = NULL, executionStoppedAt = NULL, 
-    simplify = TRUE, others = list()) {
-    parameters <- c(others, list(cluster = cluster, task = task, status = status, reason = reason, 
-        pullStartedAt = pullStartedAt, pullStoppedAt = pullStoppedAt, executionStoppedAt = executionStoppedAt, 
-        containers = as.list(containers), attachments = as.list(attachments)))
+ecs_submit_task_state_change <- function(cluster = NULL, task = NULL, status = NULL, reason = NULL, containers = NULL, 
+    attachments = NULL, pullStartedAt = NULL, pullStoppedAt = NULL, executionStoppedAt = NULL, simplify = TRUE, 
+    others = list(), print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
+    containers <- as.list(containers)
+    attachments <- as.list(attachments)
+    parameters <- c(others, list(cluster = cluster, task = task, status = status, reason = reason, containers = containers, 
+        attachments = attachments, pullStartedAt = pullStartedAt, pullStoppedAt = pullStoppedAt, executionStoppedAt = executionStoppedAt))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "SubmitTaskStateChange", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
@@ -2639,7 +2777,7 @@ ecs_submit_task_state_change <- function(cluster = NULL, task = NULL, status = N
 #' resource is deleted, the tags associated with that resource are deleted
 #' as well.
 #' 
-#' @param resourceArn String. The Amazon Resource Name (ARN) of the resource to which to add tags.
+#' @param resourceArn Character. The Amazon Resource Name (ARN) of the resource to which to add tags.
 #' @param tags List.   The tags to add to the resource.
 #' @inheritParams CommonDoc
 #' 
@@ -2679,11 +2817,14 @@ ecs_submit_task_state_change <- function(cluster = NULL, task = NULL, status = N
 #' 
 #' @return A list object or a character vector
 #' @export
-ecs_tag_resource <- function(resourceArn = NULL, tags = NULL, simplify = TRUE, others = list()) {
-    parameters <- c(others, list(resourceArn = resourceArn, tags = as.list(tags)))
+ecs_tag_resource <- function(resourceArn = NULL, tags = NULL, simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), 
+    retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
+    tags <- as.list(tags)
+    parameters <- c(others, list(resourceArn = resourceArn, tags = tags))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
-    make_request(service_request = ecs_request, action = "TagResource", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+    make_request(service_request = ecs_request, action = "TagResource", parameters = parameters, simplify = simplify, 
+        token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, network_timeout = network_timeout, 
+        region = region)
 }
 
 
@@ -2692,7 +2833,7 @@ ecs_tag_resource <- function(resourceArn = NULL, tags = NULL, simplify = TRUE, o
 #' Deletes specified tags from a
 #' resource.
 #' 
-#' @param resourceArn String. The Amazon Resource Name (ARN) of the resource from which to delete tags.
+#' @param resourceArn Character. The Amazon Resource Name (ARN) of the resource from which to delete tags.
 #' @param tagKeys List. The keys of the tags to be removed.
 #' @inheritParams CommonDoc
 #' 
@@ -2706,11 +2847,14 @@ ecs_tag_resource <- function(resourceArn = NULL, tags = NULL, simplify = TRUE, o
 #' removed.
 #' @return A list object or a character vector
 #' @export
-ecs_untag_resource <- function(resourceArn = NULL, tagKeys = NULL, simplify = TRUE, others = list()) {
-    parameters <- c(others, list(resourceArn = resourceArn, tagKeys = as.list(tagKeys)))
+ecs_untag_resource <- function(resourceArn = NULL, tagKeys = NULL, simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), 
+    retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
+    tagKeys <- as.list(tagKeys)
+    parameters <- c(others, list(resourceArn = resourceArn, tagKeys = tagKeys))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
-    make_request(service_request = ecs_request, action = "UntagResource", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+    make_request(service_request = ecs_request, action = "UntagResource", parameters = parameters, simplify = simplify, 
+        token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, network_timeout = network_timeout, 
+        region = region)
 }
 
 
@@ -2719,7 +2863,7 @@ ecs_untag_resource <- function(resourceArn = NULL, tagKeys = NULL, simplify = TR
 #' Modifies the parameters for a capacity
 #' provider.
 #' 
-#' @param name String. The name of the capacity provider to update.
+#' @param name Character. The name of the capacity provider to update.
 #' @param autoScalingGroupProvider Object. An object representing the parameters to update for the Auto Scaling group capacity provider.
 #' @inheritParams CommonDoc
 #' 
@@ -2733,11 +2877,14 @@ ecs_untag_resource <- function(resourceArn = NULL, tagKeys = NULL, simplify = TR
 #' @return A list object or a character vector
 #' @export
 ecs_update_capacity_provider <- function(name = NULL, autoScalingGroupProvider = NULL, simplify = TRUE, 
-    others = list()) {
+    others = list(), print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
+    autoScalingGroupProvider <- as.list(autoScalingGroupProvider)
     parameters <- c(others, list(name = name, autoScalingGroupProvider = autoScalingGroupProvider))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "UpdateCapacityProvider", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
@@ -2746,7 +2893,7 @@ ecs_update_capacity_provider <- function(name = NULL, autoScalingGroupProvider =
 #' Modifies the settings to use for a
 #' cluster.
 #' 
-#' @param cluster String. The name of the cluster to modify the settings for.
+#' @param cluster Character. The name of the cluster to modify the settings for.
 #' @param settings List. The setting to use by default for a cluster.
 #' @inheritParams CommonDoc
 #' 
@@ -2761,18 +2908,22 @@ ecs_update_capacity_provider <- function(name = NULL, autoScalingGroupProvider =
 #' PutAccountSettingDefault.
 #' @return A list object or a character vector
 #' @export
-ecs_update_cluster_settings <- function(cluster = NULL, settings = NULL, simplify = TRUE, others = list()) {
-    parameters <- c(others, list(cluster = cluster, settings = as.list(settings)))
+ecs_update_cluster_settings <- function(cluster = NULL, settings = NULL, simplify = TRUE, others = list(), 
+    print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
+    settings <- as.list(settings)
+    parameters <- c(others, list(cluster = cluster, settings = settings))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "UpdateClusterSettings", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
 #' Update Container Agent
 #' 
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster that your container instance is...
-#' @param containerInstance String. The container instance ID or full ARN entries for the container instance on which you would like...
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster that your container instance is...
+#' @param containerInstance Character. The container instance ID or full ARN entries for the container instance on which you would like...
 #' @inheritParams CommonDoc
 #' 
 #' @section cluster:
@@ -2786,20 +2937,22 @@ ecs_update_cluster_settings <- function(cluster = NULL, settings = NULL, simplif
 #' Amazon ECS container agent.
 #' @return A list object or a character vector
 #' @export
-ecs_update_container_agent <- function(cluster = NULL, containerInstance = NULL, simplify = TRUE, 
-    others = list()) {
+ecs_update_container_agent <- function(cluster = NULL, containerInstance = NULL, simplify = TRUE, others = list(), 
+    print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
     parameters <- c(others, list(cluster = cluster, containerInstance = containerInstance))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "UpdateContainerAgent", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
 #' Update Container Instances State
 #' 
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the container instance...
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the container instance...
 #' @param containerInstances List. A list of container instance IDs or full ARN entries.
-#' @param status String. The container instance state with which to update the container instance.
+#' @param status Character. The container instance state with which to update the container instance.
 #' @inheritParams CommonDoc
 #' 
 #' @section cluster:
@@ -2821,26 +2974,29 @@ ecs_update_container_agent <- function(cluster = NULL, containerInstance = NULL,
 #' @return A list object or a character vector
 #' @export
 ecs_update_container_instances_state <- function(cluster = NULL, containerInstances = NULL, status = NULL, 
-    simplify = TRUE, others = list()) {
-    parameters <- c(others, list(cluster = cluster, status = status, containerInstances = as.list(containerInstances)))
+    simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), 
+    network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
+    containerInstances <- as.list(containerInstances)
+    parameters <- c(others, list(cluster = cluster, containerInstances = containerInstances, status = status))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "UpdateContainerInstancesState", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
 #' Update Service
 #' 
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster that your service is running on.
-#' @param service String. The name of the service to update.
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster that your service is running on.
+#' @param service Character. The name of the service to update.
 #' @param desiredCount Integer. The number of instantiations of the task to place and keep running in your service.
-#' @param taskDefinition String. The `family` and `revision` (`family:revision`) or full ARN of the task definition to run in your...
+#' @param taskDefinition Character. The `family` and `revision` (`family:revision`) or full ARN of the task definition to run in your...
 #' @param capacityProviderStrategy List.   The capacity provider strategy to update the service to use.
 #' @param deploymentConfiguration Object. Optional deployment parameters that control how many tasks run during the deployment and the ordering...
 #' @param networkConfiguration No description can be found.
 #' @param placementConstraints List.   An array of task placement constraint objects to update the service to use.
 #' @param placementStrategy List.   The task placement strategy objects to update the service to use.
-#' @param platformVersion String. The platform version on which your tasks in the service are running.
+#' @param platformVersion Character. The platform version on which your tasks in the service are running.
 #' @param forceNewDeployment Logical. Whether to force a new deployment of the service.
 #' @param healthCheckGracePeriodSeconds Integer. The period of time, in seconds, that the Amazon ECS service scheduler should ignore unhealthy Elastic...
 #' @inheritParams CommonDoc
@@ -2954,17 +3110,22 @@ ecs_update_container_instances_state <- function(cluster = NULL, containerInstan
 #' @return A list object or a character vector
 #' @export
 ecs_update_service <- function(cluster = NULL, service = NULL, desiredCount = NULL, taskDefinition = NULL, 
-    capacityProviderStrategy = NULL, deploymentConfiguration = NULL, networkConfiguration = NULL, 
-    placementConstraints = NULL, placementStrategy = NULL, platformVersion = NULL, forceNewDeployment = NULL, 
-    healthCheckGracePeriodSeconds = NULL, simplify = TRUE, others = list()) {
-    parameters <- c(others, list(cluster = cluster, service = service, desiredCount = desiredCount, 
-        taskDefinition = taskDefinition, deploymentConfiguration = deploymentConfiguration, networkConfiguration = networkConfiguration, 
-        platformVersion = platformVersion, forceNewDeployment = forceNewDeployment, healthCheckGracePeriodSeconds = healthCheckGracePeriodSeconds, 
-        capacityProviderStrategy = as.list(capacityProviderStrategy), placementConstraints = as.list(placementConstraints), 
-        placementStrategy = as.list(placementStrategy)))
+    capacityProviderStrategy = NULL, deploymentConfiguration = NULL, networkConfiguration = NULL, placementConstraints = NULL, 
+    placementStrategy = NULL, platformVersion = NULL, forceNewDeployment = NULL, healthCheckGracePeriodSeconds = NULL, 
+    simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), 
+    network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
+    capacityProviderStrategy <- as.list(capacityProviderStrategy)
+    placementConstraints <- as.list(placementConstraints)
+    placementStrategy <- as.list(placementStrategy)
+    deploymentConfiguration <- as.list(deploymentConfiguration)
+    parameters <- c(others, list(cluster = cluster, service = service, desiredCount = desiredCount, taskDefinition = taskDefinition, 
+        capacityProviderStrategy = capacityProviderStrategy, deploymentConfiguration = deploymentConfiguration, 
+        networkConfiguration = networkConfiguration, placementConstraints = placementConstraints, placementStrategy = placementStrategy, 
+        platformVersion = platformVersion, forceNewDeployment = forceNewDeployment, healthCheckGracePeriodSeconds = healthCheckGracePeriodSeconds))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
-    make_request(service_request = ecs_request, action = "UpdateService", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+    make_request(service_request = ecs_request, action = "UpdateService", parameters = parameters, simplify = simplify, 
+        token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, network_timeout = network_timeout, 
+        region = region)
 }
 
 
@@ -2979,9 +3140,9 @@ ecs_update_service <- function(cluster = NULL, service = NULL, desiredCount = NU
 #' in the *Amazon Elastic Container Service Developer
 #' Guide*.
 #' 
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the service that the...
-#' @param service String. The short name or full Amazon Resource Name (ARN) of the service that the task set exists in.
-#' @param primaryTaskSet String. The short name or full Amazon Resource Name (ARN) of the task set to set as the primary task set...
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the service that the...
+#' @param service Character. The short name or full Amazon Resource Name (ARN) of the service that the task set exists in.
+#' @param primaryTaskSet Character. The short name or full Amazon Resource Name (ARN) of the task set to set as the primary task set...
 #' @inheritParams CommonDoc
 #' 
 #' @section cluster:
@@ -2999,11 +3160,13 @@ ecs_update_service <- function(cluster = NULL, service = NULL, desiredCount = NU
 #' @return A list object or a character vector
 #' @export
 ecs_update_service_primary_task_set <- function(cluster = NULL, service = NULL, primaryTaskSet = NULL, 
-    simplify = TRUE, others = list()) {
+    simplify = TRUE, others = list(), print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), 
+    network_timeout = aws_get_network_timeout(), region = aws_get_region()) {
     parameters <- c(others, list(cluster = cluster, service = service, primaryTaskSet = primaryTaskSet))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
     make_request(service_request = ecs_request, action = "UpdateServicePrimaryTaskSet", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+        simplify = simplify, token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, 
+        network_timeout = network_timeout, region = region)
 }
 
 
@@ -3015,9 +3178,9 @@ ecs_update_service_primary_task_set <- function(cluster = NULL, service = NULL, 
 #' Types](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-types.html)
 #' in the *Amazon Elastic Container Service Developer Guide*.
 #' 
-#' @param cluster String. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the service that the...
-#' @param service String. The short name or full Amazon Resource Name (ARN) of the service that the task set exists in.
-#' @param taskSet String. The short name or full Amazon Resource Name (ARN) of the task set to update.
+#' @param cluster Character. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the service that the...
+#' @param service Character. The short name or full Amazon Resource Name (ARN) of the service that the task set exists in.
+#' @param taskSet Character. The short name or full Amazon Resource Name (ARN) of the task set to update.
 #' @param scale No description can be found.
 #' @inheritParams CommonDoc
 #' 
@@ -3036,11 +3199,13 @@ ecs_update_service_primary_task_set <- function(cluster = NULL, service = NULL, 
 #' No description can be found.
 #' @return A list object or a character vector
 #' @export
-ecs_update_task_set <- function(cluster = NULL, service = NULL, taskSet = NULL, scale = NULL, 
-    simplify = TRUE, others = list()) {
+ecs_update_task_set <- function(cluster = NULL, service = NULL, taskSet = NULL, scale = NULL, simplify = TRUE, 
+    others = list(), print_on_error = aws_get_print_on_error(), retry_time = aws_get_retry_time(), network_timeout = aws_get_network_timeout(), 
+    region = aws_get_region()) {
     parameters <- c(others, list(cluster = cluster, service = service, taskSet = taskSet, scale = scale))
     parameters <- parameters[!vapply(parameters, is.empty, logical(1))]
-    make_request(service_request = ecs_request, action = "UpdateTaskSet", parameters = parameters, 
-        simplify = simplify, token_name = NULL)
+    make_request(service_request = ecs_request, action = "UpdateTaskSet", parameters = parameters, simplify = simplify, 
+        token_name = NULL, print_on_error = print_on_error, retry_time = retry_time, network_timeout = network_timeout, 
+        region = region)
 }
 

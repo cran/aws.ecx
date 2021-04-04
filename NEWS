@@ -1,0 +1,21 @@
+                          Changes in version 1.0.4
+New features:
+    - Add `aws_list_regions` function
+
+                          Changes in version 1.0.3
+New features:
+    - Add setter/getter for the keys and region
+    - add region to the function parameter to temporary overwrite the global setting
+
+                          Changes in version 1.0.2
+New features:
+    - Do the type conversion for the object type parameter
+
+                          Changes in version 1.0.1
+New features:
+    - Allow to temporary change the package setting through the function argument
+    - Internally do the list conversion if the function parameter should be a list
+      but the user provides a non-list object
+
+                          Changes in version 1.0.0
+First public release.

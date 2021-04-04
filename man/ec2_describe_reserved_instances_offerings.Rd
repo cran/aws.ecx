@@ -21,18 +21,22 @@ ec2_describe_reserved_instances_offerings(
   NextToken = NULL,
   OfferingType = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
-\item{AvailabilityZone}{String. The Availability Zone in which the Reserved Instance can be used.[optional]}
+\item{AvailabilityZone}{Character. The Availability Zone in which the Reserved Instance can be used.[optional]}
 
 \item{Filter}{Named list where the name is the filter name and the value is the
 filter's value. The value can be a vector or a list object (see below)[optional]}
 
 \item{IncludeMarketplace}{Logical. Include Reserved Instance Marketplace offerings in the response.[optional]}
 
-\item{InstanceType}{String. The instance type that the reservation will cover (for example, \code{m1.small}). For more information,...[optional]}
+\item{InstanceType}{Character. The instance type that the reservation will cover (for example, \code{m1.small}). For more information,...[optional]}
 
 \item{MaxDuration}{Integer.   The maximum duration (in seconds) to filter when searching for offerings.[optional]}
 
@@ -40,27 +44,39 @@ filter's value. The value can be a vector or a list object (see below)[optional]
 
 \item{MinDuration}{Integer.   The minimum duration (in seconds) to filter when searching for offerings.[optional]}
 
-\item{OfferingClass}{String. The offering class of the Reserved Instance. Can be \code{standard} or \code{convertible}.[optional]}
+\item{OfferingClass}{Character. The offering class of the Reserved Instance. Can be \code{standard} or \code{convertible}.[optional]}
 
-\item{ProductDescription}{String. The Reserved Instance product platform description.[optional]}
+\item{ProductDescription}{Character. The Reserved Instance product platform description.[optional]}
 
 \item{ReservedInstancesOfferingId}{List. One or more Reserved Instances offering IDs.[optional]}
 
 \item{DryRun}{Logical. Checks whether you have the required permissions for the action, without actually making the request,...[optional]}
 
-\item{InstanceTenancy}{String.   The tenancy of the instances covered by the reservation.[optional]}
+\item{InstanceTenancy}{Character.   The tenancy of the instances covered by the reservation.[optional]}
 
 \item{MaxResults}{Integer.   The maximum number of results to return for the request in a single page.[optional]}
 
-\item{NextToken}{Characters, The token for the next page of results[optional]}
+\item{NextToken}{Characters. The token for the next page of results[optional]}
 
-\item{OfferingType}{String. The Reserved Instance offering type.[optional]}
+\item{OfferingType}{Character. The Reserved Instance offering type.[optional]}
 
 \item{simplify}{Logical. Whether to simplify the result and handle \code{nextToken}
 in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

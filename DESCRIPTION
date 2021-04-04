@@ -1,6 +1,6 @@
 Package: aws.ecx
 Title: Communicating with AWS EC2 and ECS using AWS REST APIs
-Version: 0.99.0
+Version: 1.0.4
 Authors@R: 
     person(given = "Jiefei",
            family = "Wang",
@@ -16,7 +16,6 @@ Description:
     and ECS can be found at <https://docs.aws.amazon.com/AmazonECS/latest/APIReference/Welcome.html>.
 License: GPL-3
 Encoding: UTF-8
-LazyData: true
 RoxygenNote: 7.1.1
 Imports: methods, rjson, aws.signature, httr, xml2, utils
 URL: https://github.com/Jiefei-Wang/aws.ecx
@@ -24,8 +23,8 @@ BugReports: https://github.com/Jiefei-Wang/aws.ecx/issues
 Suggests: knitr, rmarkdown, testthat
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2021-03-18 04:35:31 UTC; Zhou Jin
+Packaged: 2021-04-04 15:17:43 UTC; Zhou Jin
 Author: Jiefei Wang [aut, cre]
 Maintainer: Jiefei Wang <szwjf08@gmail.com>
 Repository: CRAN
-Date/Publication: 2021-03-19 10:10:02 UTC
+Date/Publication: 2021-04-04 22:10:02 UTC

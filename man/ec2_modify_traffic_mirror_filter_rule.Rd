@@ -18,17 +18,21 @@ ec2_modify_traffic_mirror_filter_rule(
   RemoveField = NULL,
   DryRun = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
-\item{TrafficMirrorFilterRuleId}{String. The ID of the Traffic Mirror rule.}
+\item{TrafficMirrorFilterRuleId}{Character. The ID of the Traffic Mirror rule.}
 
-\item{TrafficDirection}{String. The type of traffic (\code{ingress} \| \code{egress}) to assign to the rule.[optional]}
+\item{TrafficDirection}{Character. The type of traffic (\code{ingress} \| \code{egress}) to assign to the rule.[optional]}
 
 \item{RuleNumber}{Integer. The number of the Traffic Mirror rule.[optional]}
 
-\item{RuleAction}{String. The action to assign to the rule.[optional]}
+\item{RuleAction}{Character. The action to assign to the rule.[optional]}
 
 \item{DestinationPortRange}{Object. The destination ports that are associated with the Traffic Mirror rule.[optional]}
 
@@ -36,11 +40,11 @@ ec2_modify_traffic_mirror_filter_rule(
 
 \item{Protocol}{Integer. The protocol, for example TCP, to assign to the Traffic Mirror rule.[optional]}
 
-\item{DestinationCidrBlock}{String. The destination CIDR block to assign to the Traffic Mirror rule.[optional]}
+\item{DestinationCidrBlock}{Character. The destination CIDR block to assign to the Traffic Mirror rule.[optional]}
 
-\item{SourceCidrBlock}{String. The source CIDR block to assign to the Traffic Mirror rule.[optional]}
+\item{SourceCidrBlock}{Character. The source CIDR block to assign to the Traffic Mirror rule.[optional]}
 
-\item{Description}{String. The description to assign to the Traffic Mirror rule.[optional]}
+\item{Description}{Character. The description to assign to the Traffic Mirror rule.[optional]}
 
 \item{RemoveField}{List.   The properties that you want to remove from the Traffic Mirror filter rule.[optional]}
 
@@ -51,6 +55,18 @@ in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

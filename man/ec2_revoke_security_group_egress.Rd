@@ -15,33 +15,49 @@ ec2_revoke_security_group_egress(
   SourceSecurityGroupName = NULL,
   SourceSecurityGroupOwnerId = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
-\item{GroupId}{String. The ID of the security group.}
+\item{GroupId}{Character. The ID of the security group.}
 
 \item{DryRun}{Logical. Checks whether you have the required permissions for the action, without actually making the request,...[optional]}
 
 \item{IpPermissions}{List. The sets of IP permissions.[optional]}
 
-\item{CidrIp}{String. Not supported. Use a set of IP permissions to specify the CIDR.[optional]}
+\item{CidrIp}{Character. Not supported. Use a set of IP permissions to specify the CIDR.[optional]}
 
 \item{FromPort}{Integer. Not supported. Use a set of IP permissions to specify the port.[optional]}
 
-\item{IpProtocol}{String. Not supported. Use a set of IP permissions to specify the protocol name or number.[optional]}
+\item{IpProtocol}{Character. Not supported. Use a set of IP permissions to specify the protocol name or number.[optional]}
 
 \item{ToPort}{Integer. Not supported. Use a set of IP permissions to specify the port.[optional]}
 
-\item{SourceSecurityGroupName}{String. Not supported. Use a set of IP permissions to specify a destination security group.[optional]}
+\item{SourceSecurityGroupName}{Character. Not supported. Use a set of IP permissions to specify a destination security group.[optional]}
 
-\item{SourceSecurityGroupOwnerId}{String. Not supported. Use a set of IP permissions to specify a destination security group.[optional]}
+\item{SourceSecurityGroupOwnerId}{Character. Not supported. Use a set of IP permissions to specify a destination security group.[optional]}
 
 \item{simplify}{Logical. Whether to simplify the result and handle \code{nextToken}
 in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

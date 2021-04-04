@@ -16,19 +16,23 @@ ec2_modify_image_attribute(
   Value = NULL,
   DryRun = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
-\item{ImageId}{String. The ID of the AMI.}
+\item{ImageId}{Character. The ID of the AMI.}
 
-\item{Attribute}{String. The name of the attribute to modify.[optional]}
+\item{Attribute}{Character. The name of the attribute to modify.[optional]}
 
 \item{Description}{Object. A new description for the AMI.[optional]}
 
 \item{LaunchPermission}{Object. A new launch permission for the AMI.[optional]}
 
-\item{OperationType}{String. The operation type.[optional]}
+\item{OperationType}{Character. The operation type.[optional]}
 
 \item{ProductCode}{List. The DevPay product codes. After you add a product code to an AMI, it can\'t be removed.[optional]}
 
@@ -36,7 +40,7 @@ ec2_modify_image_attribute(
 
 \item{UserId}{List. The AWS account IDs.[optional]}
 
-\item{Value}{String. The value of the attribute being modified.[optional]}
+\item{Value}{Character. The value of the attribute being modified.[optional]}
 
 \item{DryRun}{Logical. Checks whether you have the required permissions for the action, without actually making the request,...[optional]}
 
@@ -45,6 +49,18 @@ in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

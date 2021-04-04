@@ -12,19 +12,23 @@ ec2_create_vpc_peering_connection(
   PeerRegion = NULL,
   TagSpecification = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
 \item{DryRun}{Logical. Checks whether you have the required permissions for the action, without actually making the request,...[optional]}
 
-\item{PeerOwnerId}{String.   The AWS account ID of the owner of the accepter VPC.  Default: Your AWS account ID  [optional]}
+\item{PeerOwnerId}{Character.   The AWS account ID of the owner of the accepter VPC.  Default: Your AWS account ID  [optional]}
 
-\item{PeerVpcId}{String. The ID of the VPC with which you are creating the VPC peering connection.[optional]}
+\item{PeerVpcId}{Character. The ID of the VPC with which you are creating the VPC peering connection.[optional]}
 
-\item{VpcId}{String. The ID of the requester VPC. You must specify this parameter in the request.[optional]}
+\item{VpcId}{Character. The ID of the requester VPC. You must specify this parameter in the request.[optional]}
 
-\item{PeerRegion}{String.   The Region code for the accepter VPC, if the accepter VPC is located in a Region other than the...[optional]}
+\item{PeerRegion}{Character.   The Region code for the accepter VPC, if the accepter VPC is located in a Region other than the...[optional]}
 
 \item{TagSpecification}{List. The tags to assign to the peering connection.[optional]}
 
@@ -33,6 +37,18 @@ in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

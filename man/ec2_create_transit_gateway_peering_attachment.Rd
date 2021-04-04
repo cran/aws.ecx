@@ -12,17 +12,21 @@ ec2_create_transit_gateway_peering_attachment(
   TagSpecification = NULL,
   DryRun = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
-\item{TransitGatewayId}{String. The ID of the transit gateway.}
+\item{TransitGatewayId}{Character. The ID of the transit gateway.}
 
-\item{PeerTransitGatewayId}{String. The ID of the peer transit gateway with which to create the peering attachment.}
+\item{PeerTransitGatewayId}{Character. The ID of the peer transit gateway with which to create the peering attachment.}
 
-\item{PeerAccountId}{String. The AWS account ID of the owner of the peer transit gateway.}
+\item{PeerAccountId}{Character. The AWS account ID of the owner of the peer transit gateway.}
 
-\item{PeerRegion}{String. The Region where the peer transit gateway is located.}
+\item{PeerRegion}{Character. The Region where the peer transit gateway is located.}
 
 \item{TagSpecification}{List. The tags to apply to the transit gateway peering attachment.[optional]}
 
@@ -33,6 +37,18 @@ in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

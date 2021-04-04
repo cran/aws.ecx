@@ -19,41 +19,57 @@ ec2_request_spot_instances(
   TagSpecification = NULL,
   InstanceInterruptionBehavior = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
-\item{AvailabilityZoneGroup}{String.   The user-specified name for a logical grouping of requests.[optional]}
+\item{AvailabilityZoneGroup}{Character.   The user-specified name for a logical grouping of requests.[optional]}
 
 \item{BlockDurationMinutes}{Integer.   The required duration for the Spot Instances (also known as Spot blocks), in minutes.[optional]}
 
-\item{ClientToken}{String. Unique, case-sensitive identifier that you provide to ensure the idempotency of the request.[optional]}
+\item{ClientToken}{Character. Unique, case-sensitive identifier that you provide to ensure the idempotency of the request.[optional]}
 
 \item{DryRun}{Logical. Checks whether you have the required permissions for the action, without actually making the request,...[optional]}
 
 \item{InstanceCount}{Integer.   The maximum number of Spot Instances to launch.  Default: 1  [optional]}
 
-\item{LaunchGroup}{String.   The instance launch group.[optional]}
+\item{LaunchGroup}{Character.   The instance launch group.[optional]}
 
 \item{LaunchSpecification}{Object. The launch specification.[optional]}
 
-\item{SpotPrice}{String. The maximum price per hour that you are willing to pay for a Spot Instance.[optional]}
+\item{SpotPrice}{Character. The maximum price per hour that you are willing to pay for a Spot Instance.[optional]}
 
-\item{Type}{String.   The Spot Instance request type.  Default: \code{one-time}  [optional]}
+\item{Type}{Character.   The Spot Instance request type.  Default: \code{one-time}  [optional]}
 
-\item{ValidFrom}{String.   The start date of the request.[optional]}
+\item{ValidFrom}{Character.   The start date of the request.[optional]}
 
-\item{ValidUntil}{String.   The end date of the request, in UTC format (\emph{YYYY}-\emph{MM}-\emph{DD}T\emph{HH}:\emph{MM}:\emph{SS}Z).[optional]}
+\item{ValidUntil}{Character.   The end date of the request, in UTC format (\emph{YYYY}-\emph{MM}-\emph{DD}T\emph{HH}:\emph{MM}:\emph{SS}Z).[optional]}
 
 \item{TagSpecification}{List. The key-value pair for tagging the Spot Instance request on creation.[optional]}
 
-\item{InstanceInterruptionBehavior}{String. The behavior when a Spot Instance is interrupted. The default is \code{terminate}.[optional]}
+\item{InstanceInterruptionBehavior}{Character. The behavior when a Spot Instance is interrupted. The default is \code{terminate}.[optional]}
 
 \item{simplify}{Logical. Whether to simplify the result and handle \code{nextToken}
 in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

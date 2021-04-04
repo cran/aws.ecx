@@ -16,25 +16,29 @@ ec2_authorize_security_group_ingress(
   ToPort = NULL,
   DryRun = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
-\item{CidrIp}{String.   The IPv4 address range, in CIDR format.[optional]}
+\item{CidrIp}{Character.   The IPv4 address range, in CIDR format.[optional]}
 
 \item{FromPort}{Integer.   The start of port range for the TCP and UDP protocols, or an ICMP type number.[optional]}
 
-\item{GroupId}{String. The ID of the security group.[optional]}
+\item{GroupId}{Character. The ID of the security group.[optional]}
 
-\item{GroupName}{String. [EC2-Classic, default VPC] The name of the security group.[optional]}
+\item{GroupName}{Character. [EC2-Classic, default VPC] The name of the security group.[optional]}
 
 \item{IpPermissions}{List. The sets of IP permissions.[optional]}
 
-\item{IpProtocol}{String.   The IP protocol name (\code{tcp}, \code{udp}, \code{icmp}) or number (see \href{http://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml}{Protocol Numbers})....[optional]}
+\item{IpProtocol}{Character.   The IP protocol name (\code{tcp}, \code{udp}, \code{icmp}) or number (see \href{http://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml}{Protocol Numbers})....[optional]}
 
-\item{SourceSecurityGroupName}{String. [EC2-Classic, default VPC] The name of the source security group.[optional]}
+\item{SourceSecurityGroupName}{Character. [EC2-Classic, default VPC] The name of the source security group.[optional]}
 
-\item{SourceSecurityGroupOwnerId}{String. [nondefault VPC] The AWS account ID for the source security group, if the source security group...[optional]}
+\item{SourceSecurityGroupOwnerId}{Character. [nondefault VPC] The AWS account ID for the source security group, if the source security group...[optional]}
 
 \item{ToPort}{Integer.   The end of port range for the TCP and UDP protocols, or an ICMP code number.[optional]}
 
@@ -45,6 +49,18 @@ in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

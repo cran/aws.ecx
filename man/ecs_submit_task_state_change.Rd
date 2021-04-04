@@ -15,33 +15,49 @@ ecs_submit_task_state_change(
   pullStoppedAt = NULL,
   executionStoppedAt = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
-\item{cluster}{String. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the task.}
+\item{cluster}{Character. The short name or full Amazon Resource Name (ARN) of the cluster that hosts the task.}
 
-\item{task}{String. The task ID or full ARN of the task in the state change request.}
+\item{task}{Character. The task ID or full ARN of the task in the state change request.}
 
-\item{status}{String. The status of the state change request.}
+\item{status}{Character. The status of the state change request.}
 
-\item{reason}{String. The reason for the state change request.}
+\item{reason}{Character. The reason for the state change request.}
 
 \item{containers}{List. Any containers associated with the state change request.}
 
 \item{attachments}{List. Any attachments associated with the state change request.}
 
-\item{pullStartedAt}{String. The Unix timestamp for when the container image pull began.}
+\item{pullStartedAt}{Character. The Unix timestamp for when the container image pull began.}
 
-\item{pullStoppedAt}{String. The Unix timestamp for when the container image pull completed.}
+\item{pullStoppedAt}{Character. The Unix timestamp for when the container image pull completed.}
 
-\item{executionStoppedAt}{String. The Unix timestamp for when the task execution stopped.}
+\item{executionStoppedAt}{Character. The Unix timestamp for when the task execution stopped.}
 
 \item{simplify}{Logical. Whether to simplify the result and handle \code{nextToken}
 in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector

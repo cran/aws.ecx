@@ -13,7 +13,11 @@ ec2_create_launch_template_version(
   SourceVersion = NULL,
   VersionDescription = NULL,
   simplify = TRUE,
-  others = list()
+  others = list(),
+  print_on_error = aws_get_print_on_error(),
+  retry_time = aws_get_retry_time(),
+  network_timeout = aws_get_network_timeout(),
+  region = aws_get_region()
 )
 }
 \arguments{
@@ -21,21 +25,33 @@ ec2_create_launch_template_version(
 
 \item{DryRun}{Logical. Checks whether you have the required permissions for the action, without actually making the request,...[optional]}
 
-\item{ClientToken}{String.   Unique, case-sensitive identifier you provide to ensure the idempotency of the request.[optional]}
+\item{ClientToken}{Character.   Unique, case-sensitive identifier you provide to ensure the idempotency of the request.[optional]}
 
-\item{LaunchTemplateId}{String. The ID of the launch template.[optional]}
+\item{LaunchTemplateId}{Character. The ID of the launch template.[optional]}
 
-\item{LaunchTemplateName}{String. The name of the launch template.[optional]}
+\item{LaunchTemplateName}{Character. The name of the launch template.[optional]}
 
-\item{SourceVersion}{String. The version number of the launch template version on which to base the new version.[optional]}
+\item{SourceVersion}{Character. The version number of the launch template version on which to base the new version.[optional]}
 
-\item{VersionDescription}{String. A description for the version of the launch template.[optional]}
+\item{VersionDescription}{Character. A description for the version of the launch template.[optional]}
 
 \item{simplify}{Logical. Whether to simplify the result and handle \code{nextToken}
 in the response[optional]}
 
 \item{others}{Named list. The parameters that are not included in the
 function parameters and need to be added into the request[optional]}
+
+\item{print_on_error}{Logical. Whether to show an error message when a
+network error occurs.}
+
+\item{retry_time}{Integer. Number of retries for a REST request when encounter the
+network issue. If the request has been sent \code{retry_time} times but still not
+be able to get the response, an error will be thrown.}
+
+\item{network_timeout}{Numeric. Number of seconds to wait for a REST response
+until giving up. Can not be less than 1 ms.}
+
+\item{region}{Character. The region of the AWS service.}
 }
 \value{
 A list object or a character vector
